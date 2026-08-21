@@ -1,0 +1,12 @@
+[05:45:15]   NVIDIA GeForce RTX 4090 unavailable
+[05:45:16]   NVIDIA RTX A5000 unavailable
+[05:45:17]   NVIDIA GeForce RTX 3090 unavailable
+[05:45:18]   NVIDIA RTX A6000 unavailable
+[05:45:19]   NVIDIA A40 unavailable
+[05:53:40]   NVIDIA L40 unavailable
+[05:53:41]   NVIDIA L40S unavailable
+[05:53:42]   NVIDIA RTX 6000 Ada Generation unavailable
+[05:53:42]   no capacity (sweep 1); retrying in 60s
+[06:03:03] pod jl1g72y5aj5tah on NVIDIA GeForce RTX 4090
+[06:11:59] ssh 213.173.102.85:11151
+[06:12:03] syncing repo

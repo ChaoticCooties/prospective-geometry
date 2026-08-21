@@ -31,12 +31,26 @@ from pgeom.ops import POD_PREFIX, RunPodClient, RunPodError  # noqa: E402
 
 VOLUME_ID = "5l9knlrkk1"          # pgeom-clean
 DATACENTER = "EU-RO-1"
-# RTX 4090 is Ada (sm_89), which the image's torch 2.6.0+cu124 has kernels for.
-# The RTX PRO 4500 Blackwell is deliberately excluded: it schedules fine and
-# reports CUDA available, then fails at the first matmul with "no kernel image is
-# available for execution on the device", because Blackwell needs CUDA 12.8 and a
-# newer torch than the pinned runtime.
-GPU_CANDIDATES = ("NVIDIA GeForce RTX 4090",)
+# Every candidate is Ampere or Ada, which the image's torch 2.6.0+cu124 has
+# kernels for, and carries at least 24 GB. Blackwell is deliberately absent: it
+# schedules fine and reports CUDA available, then fails at the first matmul with
+# "no kernel image is available for execution on the device", because it needs
+# CUDA 12.8 and a newer torch than the pinned runtime.
+GPU_CANDIDATES = (
+    "NVIDIA GeForce RTX 4090",
+    "NVIDIA RTX A5000",
+    "NVIDIA GeForce RTX 3090",
+    "NVIDIA RTX A6000",
+    "NVIDIA A40",
+    "NVIDIA L40",
+    "NVIDIA L40S",
+    "NVIDIA RTX 6000 Ada Generation",
+)
+
+#: Capacity in a single datacenter comes and goes within minutes, and the volume
+#: pins us to one datacenter. Waiting is far cheaper than abandoning a run.
+CAPACITY_RETRY_MINUTES = 45
+CAPACITY_RETRY_SLEEP = 60
 IMAGE = "runpod/pytorch:0.7.0-cu1241-torch260-ubuntu2204"
 REMOTE_REPO = "/workspace/pgeom/repo"
 HF_CACHE = "/workspace/pgeom/hf"      # model weights live on the volume, cached across pods
@@ -53,6 +67,29 @@ def log(m):
 
 
 def create(client, name):
+    """Create a pod, waiting out transient capacity gaps.
+
+    Every candidate is tried in price order, then the whole sweep is retried
+    after a pause. A capacity gap is usually minutes long, so failing the run
+    outright would throw away the pod-start and dependency work for no reason.
+    """
+    deadline = time.time() + CAPACITY_RETRY_MINUTES * 60
+    attempt = 0
+    while True:
+        pod = _try_create(client, name)
+        if pod is not None:
+            return pod
+        if time.time() >= deadline:
+            raise RunPodError(
+                f"no GPU capacity in {DATACENTER} after {CAPACITY_RETRY_MINUTES} minutes "
+                f"across {len(GPU_CANDIDATES)} candidate types"
+            )
+        attempt += 1
+        log(f"  no capacity (sweep {attempt}); retrying in {CAPACITY_RETRY_SLEEP}s")
+        time.sleep(CAPACITY_RETRY_SLEEP)
+
+
+def _try_create(client, name):
     last = None
     for gpu in GPU_CANDIDATES:
         try:
@@ -73,7 +110,7 @@ def create(client, name):
         except RunPodError as e:
             last = str(e)[:120]
             log(f"  {gpu} unavailable")
-    raise RunPodError(f"no GPU available in {DATACENTER}: {last}")
+    return None
 
 
 def wait_ssh(client, pod_id, timeout_s=900):
