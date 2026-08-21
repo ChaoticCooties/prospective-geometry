@@ -138,6 +138,11 @@ class ReapReport:
         }
 
 
+def client_detail(client: "RunPodClient", pod_id: str) -> dict:
+    """Fetch one pod's detail record. Split out so tests can count the calls."""
+    return client.get_pod(pod_id)
+
+
 def reap(
     client: RunPodClient,
     *,
@@ -169,8 +174,16 @@ def reap(
             kept.append(pod_id)
             continue
         age = pod_age_minutes(pod, now=now)
-        # An unparseable age is treated as over-age: an unaccounted pod that
-        # keeps billing is worse than one reaped a little early.
+        if age is None:
+            # The list endpoint omits createdAt; the detail endpoint carries it.
+            # Without this fetch every live pod looks unaged and a lifetime reap
+            # would terminate a running search.
+            try:
+                age = pod_age_minutes(client_detail(client, pod_id), now=now)
+            except RunPodError:
+                age = None
+        # An age that is still unknown is treated as over-age: an unaccounted pod
+        # that keeps billing is worse than one reaped a little early.
         if age is None or age >= max_lifetime_minutes:
             try:
                 client.delete_pod(pod_id)

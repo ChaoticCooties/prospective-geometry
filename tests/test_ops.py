@@ -132,3 +132,24 @@ def test_spend_guard_ledger_is_cumulative():
     g.record("phase3", 7.0)
     assert g.to_json()["spent_usd"] == pytest.approx(10.0)
     assert g.entries[-1]["cumulative_usd"] == pytest.approx(10.0)
+
+
+def test_reaper_fetches_creation_time_when_the_list_omits_it():
+    """The list endpoint omits createdAt. Without a detail fetch, a lifetime reap
+    would treat every live pod as unaged and terminate a running search."""
+    class DetailTransport(FakeTransport):
+        def __call__(self, method, url, payload, key):
+            path = url.split("/v1", 1)[1]
+            if method == "GET" and path == "/pods":
+                # list view: no createdAt, exactly like the real API
+                return 200, [{"id": p["id"], "name": p["name"]} for p in self.pods.values()]
+            if method == "GET" and path.startswith("/pods/"):
+                return 200, self.pods[path.rsplit("/", 1)[1]]
+            return super().__call__(method, url, payload, key)
+
+    young = {"id": "live", "name": f"{POD_PREFIX}search", "createdAt": iso(5)}
+    old = {"id": "stale", "name": f"{POD_PREFIX}search", "createdAt": iso(600)}
+    c = RunPodClient(key="k", transport=DetailTransport([young, old]))
+    r = reap(c, max_lifetime_minutes=DEFAULT_MAX_LIFETIME_MINUTES)
+    assert r.reaped == ["stale"], "a five-minute-old search pod must survive a lifetime reap"
+    assert r.kept == ["live"]
