@@ -24,7 +24,7 @@ TRACKED_GLOBS = (
     "src/pgeom/*.py", "tests/*.py",
     "prompts/build_prompts.py", "prompts/PROVENANCE.md", "prompts/roles/*.jsonl",
     "audit/*.py", "audit/artifacts_full/*.json", "audit/artifacts_full/*.gz",
-    "scripts/*.py", "reports/*.json", "reports/*.md",
+    "scripts/*.py", "scripts/*.sh", "reports/*.json", "reports/*.md", "docs/*.md",
 )
 
 
