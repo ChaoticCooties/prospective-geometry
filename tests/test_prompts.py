@@ -100,3 +100,36 @@ def test_role_audit_passes():
     assert d["intent_identity_cross_role_hits"] == 0
     assert d["exact_duplicates"] == 0
     assert d["normalized_duplicates"] == 0
+
+
+def test_every_prompt_survives_a_tokenizer_round_trip(rows):
+    """A prompt that does not round-trip can never satisfy the canonical replay
+    contract, with any suffix, because the contract is encode(decode(ids)) == ids.
+
+    This is not hypothetical: six Dolly prompts contained a space before terminal
+    punctuation, which the Llama tokenizer encodes to one token and decodes
+    without the space. They reached a GPU run before failing. The rule now
+    excludes them at selection time.
+    """
+    pytest.importorskip("transformers")
+    from pgeom.tokenization import load_tokenizer
+
+    tok = load_tokenizer()
+    offenders = [
+        r["id"] for r in rows
+        if tok.decode(tok.encode(r["text"], add_special_tokens=False)) != r["text"]
+    ]
+    assert offenders == [], f"{len(offenders)} prompts cannot satisfy the replay contract"
+
+
+def test_a_neutral_suffix_is_canonical_on_every_prompt(rows):
+    """The neutral canonical suffix each block starts from must be canonical for
+    every prompt it will ever be spliced into, not just the ones a smoke test saw."""
+    pytest.importorskip("transformers")
+    from pgeom.tokenization import build_layout, is_canonical, load_tokenizer
+
+    tok = load_tokenizer()
+    suffix = [tok.encode(w, add_special_tokens=False)[0]
+              for w in (" also", " then", " here", " thus")]
+    bad = [r["id"] for r in rows if not is_canonical(build_layout(r["text"], suffix, tok), tok)]
+    assert bad == [], f"neutral suffix is non-canonical on {len(bad)} prompts"

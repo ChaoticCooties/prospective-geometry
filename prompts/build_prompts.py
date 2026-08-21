@@ -143,8 +143,26 @@ def keyed_rank(text: str, salt: str) -> str:
     return hashlib.sha256(f"{SELECTION_KEY}:{salt}:{text}".encode("utf-8")).hexdigest()
 
 
-def load_pool(name: str):
+def tokenizer_round_trips(text: str, tokenizer) -> bool:
+    """True when the tokenizer reproduces ``text`` exactly after a round trip.
+
+    Some crowd-sourced prompts contain a space before terminal punctuation. The
+    Llama tokenizer encodes " ?" to one token but decodes it without the space,
+    so re-encoding yields a different id. A prompt like that can never satisfy
+    the canonical replay contract, with any suffix, because the contract is
+    exactly `encode(decode(ids)) == ids`. Such prompts are therefore ineligible
+    from the start rather than discovered mid-run.
+    """
+    return tokenizer.decode(tokenizer.encode(text, add_special_tokens=False)) == text
+
+
+def load_pool(name: str, tokenizer=None):
     from datasets import load_dataset
+
+    if tokenizer is None:
+        from pgeom.tokenization import load_tokenizer
+
+        tokenizer = load_tokenizer()
 
     spec = SOURCES[name]
     repo, cfg, split = spec["hf"]
@@ -155,6 +173,8 @@ def load_pool(name: str):
         if not (MIN_PROMPT_CHARS <= len(text) <= MAX_PROMPT_CHARS):
             continue
         if "\n" in text:
+            continue
+        if not tokenizer_round_trips(text, tokenizer):
             continue
         rows.append({
             "source": name,
@@ -228,7 +248,10 @@ def emit(rows, role, block, arm, kind, out):
 
 
 def build(out_dir: Path) -> dict:
-    pools = {name: load_pool(name) for name in SOURCES}
+    from pgeom.tokenization import load_tokenizer
+
+    tokenizer = load_tokenizer()
+    pools = {name: load_pool(name, tokenizer) for name in SOURCES}
     alloc = Allocator(pools)
     rows: list[dict] = []
 
@@ -292,6 +315,11 @@ def build(out_dir: Path) -> dict:
     norms = [normalize_text(r["text"]) for r in rows]
     assert len(set(ids)) == len(ids), "duplicate prompt id"
     assert len(set(norms)) == len(norms), "duplicate normalized prompt across roles"
+    for r in rows:
+        assert tokenizer_round_trips(r["text"], tokenizer), (
+            f"prompt {r['id']} does not survive a tokenizer round trip; it could "
+            "never satisfy the canonical replay contract"
+        )
     summary_intent = IntentIndex(INTENT_JACCARD_MAX)
     for r in rows:
         w = content_words(r["text"])
@@ -310,6 +338,7 @@ def build(out_dir: Path) -> dict:
         "licenses": {k: v["license"] for k, v in SOURCES.items()},
         "max_prompt_chars": MAX_PROMPT_CHARS,
         "intent_jaccard_max": INTENT_JACCARD_MAX,
+        "tokenizer_round_trip_required": True,
     }
     (out_dir / "_summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"

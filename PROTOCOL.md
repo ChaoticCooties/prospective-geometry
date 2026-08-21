@@ -553,6 +553,35 @@ a stray path into another study's work on shared storage.
 **Original reason for the proposal.** Operator decision, taken after the
 alternative was put twice with costs attached.
 
+### D2 — 2026-08-22 — prompt sets rebuilt to require a tokenizer round trip
+
+**Deviation.** The eight prompt role files were rebuilt, changing prompt ids and
+the text of a small number of selected prompts.
+
+**Reason.** Six of the 1,848 prompts, all from Dolly, contain a space before
+terminal punctuation. The Llama tokenizer encodes `" ?"` to one token and
+decodes it *without* the space, so re-encoding yields a different id. Such a
+prompt can never satisfy the canonical replay contract — which is exactly
+`encode(decode(ids)) == ids` — with any suffix at all. The first Phase-1
+admission run died on this while building layouts for the fit role.
+
+**What changed.** A tokenizer round-trip test was added to prompt eligibility in
+`prompts/build_prompts.py`, and every role was rebuilt deterministically under
+the unchanged selection key. This is a uniform rule applied at selection time,
+not the removal of six individually chosen prompts. Two tests now assert that
+every prompt round-trips and that the neutral suffix is canonical on all of them.
+
+**Integrity.** No model outcome existed when this happened. The failed run
+crashed inside layout construction, before any readout, score, generation, or
+measurement was computed, so nothing was seen that could have influenced the
+rebuild. Both audits were re-run afterwards: 0 exact, 0 normalized and 0
+containment hits against the archive; 0 duplicates, 0 reused source rows and 0
+cross-role intent-identity pairs among the new roles. Totals are unchanged at
+1,848 prompts across the same eight roles and fourteen blocks.
+
+**Claim consequence.** None. The prompts remain fresh, disjoint, provenanced,
+and unused by the archive.
+
 **Mitigation.** `pgeom.firewall` gained shared-root containment: any path under
 `/workspace` that is not under `/workspace/pgeom` raises `ArchiveAccessError`.
 Containment is on by default and can only be switched off by explicitly setting

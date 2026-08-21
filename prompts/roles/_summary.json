@@ -120,5 +120,6 @@
     ]
   ],
   "selection_key": "pgeom-prompt-selection-v1",
+  "tokenizer_round_trip_required": true,
   "total_prompts": 1848
 }
