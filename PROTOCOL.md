@@ -510,16 +510,30 @@ See [CLAIMS.md](CLAIMS.md) for what prior work already occupies.
 Deviations from this protocol are appended here with date, reason, and the claim
 consequence.
 
-### D1 — 2026-08-21 — artifacts share a volume with prior GCG work
+### D1 — 2026-08-21 — WITHDRAWN, artifacts do not share a volume after all
 
-**Deviation.** Phase 0 froze on the assumption that study artifacts live on
-storage dedicated to this study. They will instead live on the pre-existing
-RunPod network volume `tara_gcg` (50 GB, US-KS-2), which already holds work from
-the archived Renegade experiments, under a dedicated subdirectory
-`/workspace/pgeom`.
+**Status: withdrawn on 2026-08-22. The protocol is not deviated from.**
 
-**Reason.** Operator decision, taken after the alternative was put twice with
-costs attached.
+**What was proposed.** Study artifacts would live on the pre-existing RunPod
+network volume `tara_gcg` (50 GB, US-KS-2), which already holds work from the
+archived Renegade experiments, under a dedicated subdirectory `/workspace/pgeom`.
+
+**Why it was withdrawn.** Not by argument, but because it could not be executed.
+US-KS-2 has no GPU capacity for any of six candidate types, tested with and
+without a public IP and with and without the volume attached. A network volume
+attaches only to pods in its own datacenter, so `tara_gcg` cannot serve a GPU
+study at all. Of twenty storage-capable datacenters only three had GPU capacity,
+and the study now runs on a dedicated 30 GB volume `pgeom-clean` in EU-RO-1 on
+an RTX PRO 4500 Blackwell, 32 GB.
+
+**Consequence.** The clean room is intact and no disclosure about shared storage
+is required. The containment code written for the withdrawn plan is retained and
+still enforced, because it costs nothing and closes a real hole: a network
+volume carries no `ARCHIVE_MANIFEST.md`, so marker ascent alone would not catch
+a stray path into another study's work on shared storage.
+
+**Original reason for the proposal.** Operator decision, taken after the
+alternative was put twice with costs attached.
 
 **Mitigation.** `pgeom.firewall` gained shared-root containment: any path under
 `/workspace` that is not under `/workspace/pgeom` raises `ArchiveAccessError`.

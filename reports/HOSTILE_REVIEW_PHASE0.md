@@ -82,7 +82,14 @@ statistic is low-resolution and a single noisy vertex moves it. *Status:
 inherent to width four, which is fixed by the research question. Mitigated by
 averaging two cross faces per block and requiring all six blocks.*
 
-**11. The searches run on storage that holds the previous suffix study.**
+**11. WITHDRAWN — the searches do not share storage with the previous study.**
+Originally logged because artifacts were to live on the `tara_gcg` volume
+alongside archived work. That plan proved unexecutable: US-KS-2 has no GPU
+capacity, and a volume only attaches within its own datacenter. The study runs
+on a dedicated volume in EU-RO-1, so this attack no longer lands. The original
+text is kept below for the record.
+
+**11 (original). The searches run on storage that holds the previous suffix study.**
 Artifacts live under `/workspace/pgeom` on the `tara_gcg` volume, which also
 holds archived Renegade work. `pgeom.firewall` fails closed on any path under
 `/workspace` outside the study subdirectory, so this study's code cannot resolve

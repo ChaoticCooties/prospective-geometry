@@ -31,17 +31,17 @@ model revision, with no dependency on this laptop.
 
 ## Artifacts: network volume
 
-Status: **defined, not yet verified.** Verification needs a RunPod API key,
+Status: **verified on 2026-08-22.** Verification needs a RunPod API key,
 which is not present on this machine.
 
-Decision: the study reuses the existing `tara_gcg` volume (50 GB, US-KS-2)
-rather than creating a dedicated one. See deviation D1 in the protocol for the
-clean-room consequence and the containment mitigation.
+Decision: reusing `tara_gcg` was proposed and then withdrawn as unexecutable —
+US-KS-2 has no GPU capacity, and a volume only attaches within its own
+datacenter. See withdrawn deviation D1. The study uses a dedicated volume.
 
 Design:
 
-- the existing `tara_gcg` network volume, mounted at `/workspace`, outliving
-  every pod;
+- the dedicated `pgeom-clean` network volume (30 GB, EU-RO-1), mounted at
+  `/workspace`, outliving every pod;
 - this study writes **only** under `/workspace/pgeom`; `pgeom.firewall` raises
   on any other path under `/workspace`;
 - the study never writes an `ARCHIVE_MANIFEST.md` onto the volume, which would
@@ -56,13 +56,22 @@ Design:
 - artifacts are pulled to this machine at every phase boundary and their
   SHA-256 recorded in the phase report.
 
-Verification steps to run once a key exists, before any GPU is billed:
+Verified results, volume `pgeom-clean` (`5l9knlrkk1`, 30 GB, EU-RO-1), on an
+RTX PRO 4500 Blackwell with 32,623 MiB:
 
-1. create the volume, write a known file, destroy the pod, create a second pod,
-   and confirm the file and its SHA-256 survive;
-2. kill a pod mid-write and confirm the resume path picks up the last complete
-   checkpoint rather than a truncated one;
-3. confirm the reaper terminates a pod idle beyond five minutes.
+1. **Survives pod destruction.** A 4 MB random payload written under
+   `/workspace/pgeom/durability` on pod A read back byte-identical on pod B
+   after pod A was destroyed. SHA-256
+   `ec1429f7e79a0637d81888f9acece5595e73e47f38305f9b6d9316ee67a2be63` on both
+   sides.
+2. **Truncation is detectable.** A complete checkpoint line parses (1 valid
+   line); a deliberately truncated one does not (0 valid lines). Resume can
+   therefore take the last *complete* checkpoint rather than a half-written one.
+3. **Nothing left billing.** `pods_after` was 0, confirmed by a separate
+   `pods.py list`.
+
+The volume's top level contains only `pgeom`, confirming it is dedicated to this
+study and holds nothing else.
 
 Step 3 is already demonstrated. During the volume inspection on 2026-08-21 a
 pod outlived its intended lifetime because the readback loop hung; `pods.py
@@ -89,10 +98,19 @@ a fresh volume elsewhere, on top of the clean-room objection. The cheapest
 listed GPU overall, the A5000 at $0.160/hr, showed no stock in any datacenter
 at the time of checking.
 
-Recommended a fresh volume in US-TX-1 with an A6000 at $0.330/hr. The operator
-chose to reuse `tara_gcg` instead, so the study runs in **US-KS-2** on the
-cheapest GPU at or above 24 GB available there, currently the **RTX PRO 4500
-Blackwell, 32 GB, at $0.500/hr**. Budget forecasts use that rate.
+Capacity, not preference, settled this. Probing every storage-capable
+datacenter found GPUs in only three of twenty:
+
+| Datacenter | GPUs with capacity |
+| --- | --- |
+| EU-RO-1 | RTX PRO 4500 Blackwell (32 GB), RTX 4090 |
+| US-CA-2 | RTX 4090 |
+| US-IL-1 | RTX 4090 |
+
+The study runs in **EU-RO-1** on the **RTX PRO 4500 Blackwell, 32 GB**, chosen
+for VRAM headroom on the GCG backward pass at the same listed price as a 24 GB
+4090. Phase 2 measures the real hourly rate from billing rather than trusting
+the listed price, and forecasts from that.
 
 Account balance at freeze: **$21.37**, which is below the study's $25-30 target
 band. Standing spend is $0.005/hr for the existing 50 GB volume.

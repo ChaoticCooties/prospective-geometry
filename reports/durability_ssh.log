@@ -5,3 +5,32 @@
 [00:25:04]   waiting: RUNNING ip=''
 [00:25:20]   waiting: RUNNING ip=''
 [00:25:36]   waiting: RUNNING ip=''
+[00:26:02] write rc=0
+WROTE=ec1429f7e79a0637d81888f9acece5595e73e47f38305f9b6d9316ee67a2be63
+NVIDIA RTX PRO 4500 Blackwell, 32623 MiB
+mfs#euro-2.runpod.net:9421  2.1P  1.7P  470T  79% /workspace
+[00:26:02] destroying pod A
+[00:26:33] pod B: read back on fresh hardware
+[00:26:35]   created on NVIDIA RTX PRO 4500 Blackwell: yosy3ijhv8thid
+[00:26:36]   waiting: RUNNING ip=''
+[00:27:01] verify rc=0
+[00:27:02] deleted yosy3ijhv8thid
+[00:27:08] pods after: 0
+{
+  "complete_checkpoint_valid_lines": 1,
+  "datacenter": "EU-RO-1",
+  "expected_sha256": "ec1429f7e79a0637d81888f9acece5595e73e47f38305f9b6d9316ee67a2be63",
+  "gpu_used": "NVIDIA RTX PRO 4500 Blackwell",
+  "pods_after": 0,
+  "readback_sha256": "ec1429f7e79a0637d81888f9acece5595e73e47f38305f9b6d9316ee67a2be63",
+  "study_dir": "/workspace/pgeom",
+  "survived": true,
+  "truncated_checkpoint_valid_lines": 0,
+  "truncation_detectable": true,
+  "volume_id": "5l9knlrkk1",
+  "volume_toplevel_names": [
+    "pgeom"
+  ],
+  "write_output": "WROTE=ec1429f7e79a0637d81888f9acece5595e73e47f38305f9b6d9316ee67a2be63\nNVIDIA RTX PRO 4500 Blackwell, 32623 MiB\nmfs#euro-2.runpod.net:9421  2.1P  1.7P  470T  79% /workspace",
+  "wrote_sha256": "ec1429f7e79a0637d81888f9acece5595e73e47f38305f9b6d9316ee67a2be63"
+}
