@@ -133,14 +133,18 @@ def main() -> int:
             raise RunPodError("sshd never came up")
 
         log("syncing repo")
-        subprocess.run(
-            ["rsync", "-az", "--delete",
-             "--exclude", ".git", "--exclude", "reports/remote",
-             "--exclude", "audit/artifacts_full",
-             "-e", f"ssh {' '.join(SSH_OPTS)} -p {port}",
-             f"{ROOT}/", f"root@{host}:{REMOTE_REPO}/"],
-            check=True, capture_output=True, text=True, timeout=900,
+        # tar over SSH rather than rsync: the pod image has tar but not rsync,
+        # and this needs nothing installed on either end.
+        sync = subprocess.run(
+            f"tar czf - -C {ROOT} "
+            f"--exclude=.git --exclude=reports/remote --exclude=audit/artifacts_full "
+            f"--exclude=__pycache__ --exclude=.pytest_cache . | "
+            f"ssh {' '.join(SSH_OPTS)} -p {port} root@{host} "
+            f"'mkdir -p {REMOTE_REPO} && tar xzf - -C {REMOTE_REPO}'",
+            shell=True, capture_output=True, text=True, timeout=900,
         )
+        if sync.returncode != 0:
+            raise RunPodError(f"repo sync failed: {sync.stderr[:300]}")
 
         # Token over stdin: never a command-line argument, never in the pod's env
         # record, never on the network volume.
@@ -162,11 +166,13 @@ def main() -> int:
         log("fetching artifacts")
         local = ROOT / args.fetch
         local.mkdir(parents=True, exist_ok=True)
-        subprocess.run(
-            ["rsync", "-az", "-e", f"ssh {' '.join(SSH_OPTS)} -p {port}",
-             f"root@{host}:/workspace/pgeom/artifacts/", f"{local}/"],
-            check=False, capture_output=True, text=True, timeout=900,
+        fetch = subprocess.run(
+            f"ssh {' '.join(SSH_OPTS)} -p {port} root@{host} "
+            f"'tar czf - -C /workspace/pgeom/artifacts . 2>/dev/null' | "
+            f"tar xzf - -C {local}",
+            shell=True, capture_output=True, text=True, timeout=900,
         )
+        status["fetch_rc"] = fetch.returncode
     except Exception as e:
         status["error"] = f"{type(e).__name__}: {str(e)[:300]}"
         log(status["error"])

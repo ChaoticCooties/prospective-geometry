@@ -39,7 +39,7 @@
     "scripts/build_manifest.py": "81994c6fdc3f30c4438d6781165fecfaeaf19531c87b8f5b1700b0400876c721",
     "scripts/pods.py": "81b837672a442c990ebfc80a1ff9ef0426e9c58bfec3a01973f9de3edf737133",
     "scripts/provision_volume.py": "e97036b5e6bbef04b097bdd9ad97bc6fc504ed960985d78ee04c6434a309702c",
-    "scripts/run_on_pod.py": "6d80aa7d91085baf586e757d8c5f3c59577b0a4c1f501763a78f28040ac1ec23",
+    "scripts/run_on_pod.py": "4c92bfc88c61045174b30705166e7e40ed0dca5127435f4238159689cfc0d287",
     "scripts/secret_scan.sh": "6081f080cbf4c88c41f17d5eb5f4cff82652a4f5ba1c8296fcd464cd614c2191",
     "scripts/verify_freeze.py": "fadd31bcdf1bb920764b5a5d9f4ce4476a7dd8bd961588eae5b62a6d4dca1735",
     "scripts/verify_volume_durability.py": "3ce3f674110c40e29d0d01c42797739a3de9a70094011a9cdbb6140b3a1cb37c",
@@ -188,9 +188,9 @@
       "requires_single_leading_space": true
     }
   },
-  "git_commit_at_build": "156631a14ec66ef8202c2bd3a22b6518de424cb5",
+  "git_commit_at_build": "441d6b2e0fdad1707b2e5733bc7234bdeac278c9",
   "gpu_provisioned": false,
-  "manifest_sha256": "bdc7f9a0ef3e50e9fe156890ba588fb54be068bd36a61f43713ad3f395ad5cf4",
+  "manifest_sha256": "c832f6128264772f0efa2597abf292a26ff4441d4f45d3369e8b181950c27b66",
   "manifest_version": 1,
   "phase_frozen": 0,
   "study": "prospective-geometry",
