@@ -56,6 +56,38 @@ Verification steps to run once a key exists, before any GPU is billed:
    checkpoint rather than a truncated one;
 3. confirm the reaper terminates a pod idle beyond five minutes.
 
+Step 3 is already demonstrated. During the volume inspection on 2026-08-21 a
+pod outlived its intended lifetime because the readback loop hung; `pods.py
+reap --all` terminated it and `pods.py list` confirmed zero pods afterward.
+Total unintended spend was about $0.02. The lesson is recorded in the operating
+rules: every RunPod call runs backgrounded, because a foreground tool timeout
+can kill the driver process before its teardown runs and leave a pod billing.
+
+## Datacenter and GPU findings, 2026-08-21
+
+The existing volume `tara_gcg` (50 GB) lives in **US-KS-2**, and a network
+volume can only attach to pods in its own datacenter. That pins the choice of
+GPU, and US-KS-2 is expensive:
+
+| Datacenter | Cheapest GPU at or above 24 GB | Price |
+| --- | --- | --- |
+| US-KS-2 (where `tara_gcg` is) | RTX PRO 4500 Blackwell, 32 GB | $0.500/hr |
+| US-TX-1 | RTX A6000, 48 GB | $0.330/hr |
+| EU-SE-1 | RTX A6000, 48 GB | $0.330/hr |
+| EU-CZ-1 | RTX 3090, 24 GB | $0.220/hr |
+
+Reusing `tara_gcg` therefore costs 1.5x to 2.3x more per GPU hour than moving to
+a fresh volume elsewhere, on top of the clean-room objection. The cheapest
+listed GPU overall, the A5000 at $0.160/hr, showed no stock in any datacenter
+at the time of checking.
+
+Recommended: a fresh volume in **US-TX-1** with the **RTX A6000 at $0.330/hr**.
+48 GB removes any out-of-memory risk for an 8B model with a GCG backward pass,
+and the datacenter is unrelated to the archived work.
+
+Account balance at freeze: **$21.37**, which is below the study's $25-30 target
+band. Standing spend is $0.005/hr for the existing 50 GB volume.
+
 ## Credentials
 
 Rule: no credential in remotes, logs, manifests, shell history, or persistent
