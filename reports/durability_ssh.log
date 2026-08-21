@@ -1,0 +1,20 @@
+[21:12:09] trying NVIDIA RTX A5000
+[21:12:10]   unavailable: POST /pods failed with HTTP 500: {'error': '{"error":"create pod: could not find any pods with required specif
+[21:12:10] trying NVIDIA GeForce RTX 3090
+[21:12:11]   unavailable: POST /pods failed with HTTP 500: {'error': '{"error":"create pod: could not find any pods with required specif
+[21:12:11] trying NVIDIA RTX A6000
+[21:12:12]   unavailable: POST /pods failed with HTTP 500: {'error': '{"error":"create pod: There are no instances currently available",
+[21:12:12] trying NVIDIA RTX PRO 4500 Blackwell
+[21:12:13]   unavailable: POST /pods failed with HTTP 500: {'error': '{"error":"create pod: could not find any pods with required specif
+[21:12:13] trying NVIDIA A40
+[21:12:14]   unavailable: POST /pods failed with HTTP 500: {'error': '{"error":"create pod: could not find any pods with required specif
+[21:12:14] trying NVIDIA RTX 6000 Ada Generation
+[21:12:15]   unavailable: POST /pods failed with HTTP 500: {'error': '{"error":"create pod: There are no instances currently available",
+[21:12:20] pods after: 0
+Traceback (most recent call last):
+  File "/Users/chaoticcooties/Desktop/renegade/prospective-geometry/scripts/verify_volume_ssh.py", line 168, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/chaoticcooties/Desktop/renegade/prospective-geometry/scripts/verify_volume_ssh.py", line 132, in main
+    raise RunPodError(results["error"])
+pgeom.ops.RunPodError: no candidate GPU had capacity in this datacenter

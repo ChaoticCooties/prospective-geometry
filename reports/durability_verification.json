@@ -1,0 +1,7 @@
+{
+  "datacenter": "US-KS-2",
+  "error": "verdict never became reachable over the pod proxy",
+  "pods_after": 0,
+  "study_dir": "/workspace/pgeom",
+  "volume_id": "89x1h5z4nj"
+}

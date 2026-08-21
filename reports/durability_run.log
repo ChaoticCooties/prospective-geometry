@@ -1,3 +1,14 @@
 [20:34:57] pod 1: writing payload and checkpoints
 [20:37:29] destroying pod 1
 [20:37:55] pod 2: reading back on fresh hardware
+[20:38:37]   waiting for verdict (5 tries)
+[20:39:28]   waiting for verdict (10 tries)
+[20:45:03] deleted gtsfeyu549jryl
+[20:45:08] pods after: 0
+{
+  "datacenter": "US-KS-2",
+  "error": "verdict never became reachable over the pod proxy",
+  "pods_after": 0,
+  "study_dir": "/workspace/pgeom",
+  "volume_id": "89x1h5z4nj"
+}
