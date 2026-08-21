@@ -1,1 +1,96 @@
-[00:36:52] pod 7leaxie49dousz on NVIDIA RTX PRO 4500 Blackwell
+[01:54:04] pod bz1qm3fzvi15l9 on NVIDIA GeForce RTX 4090
+[02:02:37] ssh 213.173.108.90:21085
+[02:02:42] syncing repo
+[02:02:56] installing pinned dependencies
+[02:03:13] remote versions: 2.6.0+cu124 4.49.0 True
+[02:03:13] running remote script
+
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
+Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.31it/s]
+Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.10it/s]
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.01it/s]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.52it/s]{
+  "attn_mass_finite": true,
+  "bank_size": 256,
+  "canonical_replay_all_prompts": true,
+  "device": "cuda",
+  "forward_seconds_per_prompt": 0.018,
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "gpu_total_gb": 25.3,
+  "instruction_mass_mean_benign": 0.09014,
+  "instruction_mass_mean_harmful": 0.064,
+  "intervention_a_delta": -2.2705,
+  "intervention_a_dose_sigma": 2.27007,
+  "intervention_b_delta": -0.05287,
+  "load_seconds": 46.5,
+  "n_benign": 12,
+  "n_harmful": 12,
+  "n_heads": 32,
+  "n_layers": 32,
+  "neutral_suffix_ids": [
+    1101,
+    1243,
+    1618,
+    8617
+  ],
+  "peak_gpu_gb": 17.27,
+  "phase": "gpu_smoke",
+  "resid_finite": true,
+  "role_used": "engineering",
+  "suffix_gradient_finite": true,
+  "suffix_gradient_norm": 54.75,
+  "throwaway_a_sha": "f5b8c702c824597d",
+  "throwaway_auroc_a": 1.0,
+  "throwaway_auroc_b": 0.9792,
+  "throwaway_b_heads": [
+    [
+      7,
+      5
+    ],
+    [
+      9,
+      25
+    ],
+    [
+      16,
+      10
+    ],
+    [
+      18,
+      6
+    ],
+    [
+      18,
+      16
+    ],
+    [
+      22,
+      22
+    ],
+    [
+      22,
+      26
+    ],
+    [
+      24,
+      31
+    ]
+  ],
+  "throwaway_spearman_ab": 0.6026,
+  "total_seconds": 48.7
+}
+
+Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.33it/s]
+[02:11:59] fetching artifacts
+[02:12:05] deleted bz1qm3fzvi15l9
+[02:12:11] pods after: 0
+{
+  "fetch_rc": 0,
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "pod_id": "bz1qm3fzvi15l9",
+  "pods_after": 0,
+  "remote_rc": 0,
+  "remote_versions": "2.6.0+cu124 4.49.0 True",
+  "script": "smoke.py",
+  "started": "2026-08-21T15:54:01Z"
+}

@@ -50,6 +50,10 @@ SHAM_LAYER = 2
 BIAS_SEARCH = (0.0, 12.0)
 BIAS_STEPS = 18
 BANK_SIZE = 512
+# Reachability scores every bank token on every nomination prompt, so it
+# dominates Phase 1 wall clock. These sequences are ~60 tokens, so a large batch
+# costs little memory and turns the stage from tens of minutes into minutes.
+REACH_BATCH = 24
 BANK_KEY = "pgeom-admission-bank-v1"
 MUTATION_POSITION = 2          # frozen: which of the four suffix slots is mutated
 NEUTRAL_WORDS = (" also", " then", " here", " thus")
@@ -352,7 +356,8 @@ def one_step_reachability(engine, pkg_a, pkg_b, by_arm) -> dict:
             if not is_canonical(lay, engine.tok):
                 return None
             layouts.append(lay)
-        resid, mass = engine.readouts(layouts, need_attention=(which == "b"), batch_size=8)
+        resid, mass = engine.readouts(layouts, need_attention=(which == "b"),
+                                      batch_size=REACH_BATCH)
         return float(pkg_a.score(resid).mean()) if which == "a" else float(pkg_b.score(mass).mean())
 
     base_suffix = list(engine.suffix)

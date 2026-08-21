@@ -1,0 +1,70 @@
+{
+  "attn_mass_finite": true,
+  "bank_size": 256,
+  "canonical_replay_all_prompts": true,
+  "device": "cuda",
+  "forward_seconds_per_prompt": 0.018,
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "gpu_total_gb": 25.3,
+  "instruction_mass_mean_benign": 0.09014,
+  "instruction_mass_mean_harmful": 0.064,
+  "intervention_a_delta": -2.2705,
+  "intervention_a_dose_sigma": 2.27007,
+  "intervention_b_delta": -0.05287,
+  "load_seconds": 46.5,
+  "n_benign": 12,
+  "n_harmful": 12,
+  "n_heads": 32,
+  "n_layers": 32,
+  "neutral_suffix_ids": [
+    1101,
+    1243,
+    1618,
+    8617
+  ],
+  "peak_gpu_gb": 17.27,
+  "phase": "gpu_smoke",
+  "resid_finite": true,
+  "role_used": "engineering",
+  "suffix_gradient_finite": true,
+  "suffix_gradient_norm": 54.75,
+  "throwaway_a_sha": "f5b8c702c824597d",
+  "throwaway_auroc_a": 1.0,
+  "throwaway_auroc_b": 0.9792,
+  "throwaway_b_heads": [
+    [
+      7,
+      5
+    ],
+    [
+      9,
+      25
+    ],
+    [
+      16,
+      10
+    ],
+    [
+      18,
+      6
+    ],
+    [
+      18,
+      16
+    ],
+    [
+      22,
+      22
+    ],
+    [
+      22,
+      26
+    ],
+    [
+      24,
+      31
+    ]
+  ],
+  "throwaway_spearman_ab": 0.6026,
+  "total_seconds": 48.7
+}

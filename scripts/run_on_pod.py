@@ -31,10 +31,16 @@ from pgeom.ops import POD_PREFIX, RunPodClient, RunPodError  # noqa: E402
 
 VOLUME_ID = "5l9knlrkk1"          # pgeom-clean
 DATACENTER = "EU-RO-1"
-GPU_CANDIDATES = ("NVIDIA RTX PRO 4500 Blackwell", "NVIDIA GeForce RTX 4090")
+# RTX 4090 is Ada (sm_89), which the image's torch 2.6.0+cu124 has kernels for.
+# The RTX PRO 4500 Blackwell is deliberately excluded: it schedules fine and
+# reports CUDA available, then fails at the first matmul with "no kernel image is
+# available for execution on the device", because Blackwell needs CUDA 12.8 and a
+# newer torch than the pinned runtime.
+GPU_CANDIDATES = ("NVIDIA GeForce RTX 4090",)
 IMAGE = "runpod/pytorch:0.7.0-cu1241-torch260-ubuntu2204"
 REMOTE_REPO = "/workspace/pgeom/repo"
 HF_CACHE = "/workspace/pgeom/hf"      # model weights live on the volume, cached across pods
+POD_TOKEN = "/root/.hf_token"         # pod-local, never the volume: the volume outlives the pod
 PUBKEY = (Path.home() / ".ssh" / "id_ed25519.pub").read_text().strip()
 TOKEN_PATH = Path.home() / ".cache" / "huggingface" / "token"
 SSH_OPTS = ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null",
@@ -151,16 +157,37 @@ def main() -> int:
 
         # Token over stdin: never a command-line argument, never in the pod's env
         # record, never on the network volume.
-        ssh(host, port, "mkdir -p /root/.cache/huggingface && "
-                        "cat > /root/.cache/huggingface/token && "
-                        "chmod 600 /root/.cache/huggingface/token",
+        ssh(host, port, f"cat > {POD_TOKEN} && chmod 600 {POD_TOKEN}",
             stdin_text=TOKEN_PATH.read_text().strip(), timeout=60)
+
+        log("installing pinned dependencies")
+        # Pinned to the versions the study was frozen against. The chat-template
+        # hash check would catch a template change, but pinning avoids relying on
+        # that as the only guard. Wheels cache on the volume so a later pod is fast.
+        rc, out = ssh(host, port,
+            f"export PIP_CACHE_DIR=/workspace/pgeom/pipcache && "
+            f"python3 -m pip install -q --disable-pip-version-check "
+            f"'transformers==4.49.0' 'tokenizers>=0.21,<0.22' 'accelerate>=1.0' "
+            f"'safetensors>=0.4' 'huggingface_hub>=0.30' 2>&1 | tail -5",
+            timeout=1800)
+        if rc != 0:
+            raise RunPodError(f"dependency install failed: {out[:300]}")
+        rc, ver = ssh(host, port,
+            "python3 -c 'import torch,transformers;"
+            "print(torch.__version__, transformers.__version__, torch.cuda.is_available())'",
+            timeout=300)
+        log(f"remote versions: {ver.strip()}")
+        status["remote_versions"] = ver.strip()
 
         log("running remote script")
         remote_cmd = (
             f"set -o pipefail; mkdir -p {HF_CACHE} && "
-            f"export HF_HOME={HF_CACHE} PYTHONPATH={REMOTE_REPO}/src "
-            f"PYTHONUNBUFFERED=1 && "
+            # HF_HUB_CACHE, not HF_HOME: HF_HOME also redirects the token lookup,
+            # which would put the credential on the network volume that outlives
+            # the pod. The token is read from a pod-local file and expanded inside
+            # the pod's shell, so its value never appears in the ssh command line.
+            f'export HF_HUB_CACHE={HF_CACHE} HF_TOKEN="$(cat {POD_TOKEN})" '
+            f"PYTHONPATH={REMOTE_REPO}/src PYTHONUNBUFFERED=1 && "
             f"cd {REMOTE_REPO} && python3 -u scripts/remote/{args.script} {args.args}"
         )
         rc, out = ssh(host, port, remote_cmd, timeout=args.timeout, stream=True)
