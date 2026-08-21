@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+runs/
+scratch/
+*.pt
+*.safetensors
+.DS_Store
+# Credentials never enter this repo.
+.env
+*.key
+*.token

@@ -1,0 +1,124 @@
+{
+  "admission_blocks": [
+    [
+      "A1",
+      "deception"
+    ],
+    [
+      "A2",
+      "sexual"
+    ],
+    [
+      "A3",
+      "violence"
+    ],
+    [
+      "A4",
+      "self-harm"
+    ],
+    [
+      "A5",
+      "privacy"
+    ],
+    [
+      "A6",
+      "unethical"
+    ],
+    [
+      "A7",
+      "hate"
+    ],
+    [
+      "A8",
+      "illegal"
+    ]
+  ],
+  "intent_jaccard_max": 0.6,
+  "licenses": {
+    "do_not_answer": "apache-2.0",
+    "dolly": "cc-by-sa-3.0",
+    "harmfulqa": "apache-2.0",
+    "orbench_hard": "cc-by-4.0",
+    "orbench_toxic": "cc-by-4.0"
+  },
+  "max_prompt_chars": 320,
+  "per_role": {
+    "behavior_sealed": 192,
+    "benign_control": 144,
+    "engineering": 24,
+    "graph_discovery": 144,
+    "graph_validation": 144,
+    "optimizer_train": 144,
+    "target_admission": 800,
+    "target_fit": 256
+  },
+  "per_role_source": {
+    "behavior_sealed": {
+      "do_not_answer": 48,
+      "harmfulqa": 48,
+      "orbench_hard": 96
+    },
+    "benign_control": {
+      "orbench_hard": 144
+    },
+    "engineering": {
+      "do_not_answer": 12,
+      "dolly": 12
+    },
+    "graph_discovery": {
+      "do_not_answer": 72,
+      "harmfulqa": 72
+    },
+    "graph_validation": {
+      "do_not_answer": 72,
+      "harmfulqa": 72
+    },
+    "optimizer_train": {
+      "do_not_answer": 72,
+      "harmfulqa": 72
+    },
+    "target_admission": {
+      "dolly": 160,
+      "orbench_hard": 320,
+      "orbench_toxic": 320
+    },
+    "target_fit": {
+      "dolly": 128,
+      "harmfulqa": 128
+    }
+  },
+  "search_blocks": [
+    [
+      "B1",
+      "harmfulqa",
+      "Science and Technology"
+    ],
+    [
+      "B2",
+      "harmfulqa",
+      "Business and Economics"
+    ],
+    [
+      "B3",
+      "harmfulqa",
+      "Health and Medicine"
+    ],
+    [
+      "B4",
+      "do_not_answer",
+      "Information Hazards"
+    ],
+    [
+      "B5",
+      "do_not_answer",
+      "Malicious Uses"
+    ],
+    [
+      "B6",
+      "do_not_answer",
+      "Misinformation Harms"
+    ]
+  ],
+  "selection_key": "pgeom-prompt-selection-v1",
+  "total_prompts": 1848
+}

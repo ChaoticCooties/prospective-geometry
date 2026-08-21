@@ -1,0 +1,70 @@
+{
+  "null": {
+    "admission_null_no_effect": {
+      "ci95": [
+        0.0,
+        0.00019
+      ],
+      "false_pass": 0.0
+    },
+    "complete_pipeline_null": {
+      "ci95": [
+        0.0,
+        0.00019
+      ],
+      "false_pass": 0.0
+    },
+    "design_accepted": true,
+    "geometry_null_N1_no_geometry": {
+      "ci95": [
+        3e-05,
+        0.00036
+      ],
+      "false_pass": 0.0001
+    },
+    "geometry_null_N2_not_objective_specific": {
+      "ci95": [
+        0.0,
+        0.00019
+      ],
+      "false_pass": 0.0
+    },
+    "max_allowed_false_pass": 0.05,
+    "n_sims": 20000,
+    "params": {
+      "admission_auroc_mean": 0.62,
+      "admission_auroc_sd": 0.06,
+      "admission_block_sd": 3.0,
+      "admission_effect_mean": 12.0,
+      "admission_effect_sd": 4.0,
+      "block_scale_sd": 0.25,
+      "disc_val_rho": 0.3,
+      "noise_sd": 0.15
+    },
+    "seed": 20260821,
+    "worst_false_pass": 0.0001
+  },
+  "power": {
+    "admission_power": {
+      "effect22_placebo8_auroc0.8": {
+        "power_causally_distinct": 0.0984,
+        "power_pass": 0.1044
+      },
+      "effect25_placebo5_auroc0.85": {
+        "power_causally_distinct": 0.6974,
+        "power_pass": 0.721
+      },
+      "effect30_placebo6_auroc0.9": {
+        "power_causally_distinct": 0.764,
+        "power_pass": 0.794
+      },
+      "effect35_placebo4_auroc0.92": {
+        "power_causally_distinct": 0.7912,
+        "power_pass": 0.8156
+      }
+    },
+    "geometry_power": 0.7664,
+    "n_sims": 5000,
+    "seed": 20260822
+  }
+}

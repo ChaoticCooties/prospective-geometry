@@ -1,0 +1,101 @@
+{
+  "distinct_template_prefixes": 1107,
+  "exact_duplicates": 0,
+  "intent_identity_cross_role_hits": 0,
+  "intent_identity_examples": [],
+  "intent_identity_threshold": 0.6,
+  "largest_template_families": {
+    "can you describe a": 16,
+    "can you explain the": 16,
+    "can you help me": 21,
+    "how can i avoid": 15,
+    "how can i create": 35,
+    "how can i make": 14,
+    "how can i manipulate": 17,
+    "how can i use": 83,
+    "what are some methods": 22,
+    "what steps can i": 14
+  },
+  "max_role_pair_containment": 0.0099,
+  "normalized_duplicates": 0,
+  "pass": true,
+  "prompts_in_families_ge5": 537,
+  "role_pair_shingle_containment": {
+    "behavior_sealed|benign_control": 0.0025,
+    "behavior_sealed|engineering": 0.0,
+    "behavior_sealed|graph_discovery": 0.0035,
+    "behavior_sealed|graph_validation": 0.0,
+    "behavior_sealed|optimizer_train": 0.0059,
+    "behavior_sealed|target_admission": 0.0083,
+    "behavior_sealed|target_fit": 0.0,
+    "benign_control|engineering": 0.0,
+    "benign_control|graph_discovery": 0.0018,
+    "benign_control|graph_validation": 0.0,
+    "benign_control|optimizer_train": 0.0,
+    "benign_control|target_admission": 0.0077,
+    "benign_control|target_fit": 0.0,
+    "engineering|graph_discovery": 0.0,
+    "engineering|graph_validation": 0.0,
+    "engineering|optimizer_train": 0.0,
+    "engineering|target_admission": 0.0,
+    "engineering|target_fit": 0.0,
+    "graph_discovery|graph_validation": 0.0038,
+    "graph_discovery|optimizer_train": 0.0099,
+    "graph_discovery|target_admission": 0.0053,
+    "graph_discovery|target_fit": 0.0,
+    "graph_validation|optimizer_train": 0.0059,
+    "graph_validation|target_admission": 0.0,
+    "graph_validation|target_fit": 0.0,
+    "optimizer_train|target_admission": 0.0,
+    "optimizer_train|target_fit": 0.0,
+    "target_admission|target_fit": 0.0009
+  },
+  "role_sizes": {
+    "behavior_sealed": 192,
+    "benign_control": 144,
+    "engineering": 24,
+    "graph_discovery": 144,
+    "graph_validation": 144,
+    "optimizer_train": 144,
+    "target_admission": 800,
+    "target_fit": 256
+  },
+  "role_source_matrix": {
+    "behavior_sealed": {
+      "do_not_answer": 48,
+      "harmfulqa": 48,
+      "orbench_hard": 96
+    },
+    "benign_control": {
+      "orbench_hard": 144
+    },
+    "engineering": {
+      "do_not_answer": 12,
+      "dolly": 12
+    },
+    "graph_discovery": {
+      "do_not_answer": 72,
+      "harmfulqa": 72
+    },
+    "graph_validation": {
+      "do_not_answer": 72,
+      "harmfulqa": 72
+    },
+    "optimizer_train": {
+      "do_not_answer": 72,
+      "harmfulqa": 72
+    },
+    "target_admission": {
+      "dolly": 160,
+      "orbench_hard": 320,
+      "orbench_toxic": 320
+    },
+    "target_fit": {
+      "dolly": 128,
+      "harmfulqa": 128
+    }
+  },
+  "source_row_reuse": 0,
+  "template_prefix_words": 4,
+  "total_prompts": 1848
+}
