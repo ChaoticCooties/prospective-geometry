@@ -61,6 +61,7 @@
     "src/pgeom/tokenization.py": "307f44b67c55d02181ab73ccb4dca90988564eaf9debbe39c9eaa2b10d8d9392",
     "tests/conftest.py": "afa57090c1420935598cf61305862ed35229870f32c20838d1eda6f1c46bcabb",
     "tests/test_admission.py": "be55b4c4b87e7aaeec24bba777bff0dca9da6f821b28f340bbc580142e70a8b8",
+    "tests/test_admission_integration.py": "8e3edbc4ed852faca78f3830901e5f3f8727ec57169912ac110bab3fe3d30bad",
     "tests/test_batching.py": "656b782296ac2310ac2ace0d341258ad2fa2d9b0417ec8601867e08cbb9bf0d0",
     "tests/test_behavior.py": "11f9b1b856e07a1e787844e1fd2bd7cf5f9ed1128cb207f2137ced56a608c1f9",
     "tests/test_candidates.py": "3600f080fa53cac358360095bed54b54f682b6744dfbfcc5e9d5ba9f6f95c46c",
@@ -188,9 +189,9 @@
       "requires_single_leading_space": true
     }
   },
-  "git_commit_at_build": "441d6b2e0fdad1707b2e5733bc7234bdeac278c9",
+  "git_commit_at_build": "cc83762b4e8f473ef5157a4a78ccda58a432513e",
   "gpu_provisioned": false,
-  "manifest_sha256": "c832f6128264772f0efa2597abf292a26ff4441d4f45d3369e8b181950c27b66",
+  "manifest_sha256": "caab03cd483d2c3a73cc8b30347cb7ae460f1f3100e304a24ca325f6aaf14cdd",
   "manifest_version": 1,
   "phase_frozen": 0,
   "study": "prospective-geometry",

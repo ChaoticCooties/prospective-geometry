@@ -1,1 +1,17 @@
 [00:34:22] pod l36sotrrmof9m0 on NVIDIA RTX PRO 4500 Blackwell
+[00:35:56] ssh 213.173.107.41:12054
+[00:36:00] syncing repo
+[00:36:15] RunPodError: repo sync failed: tar: ._.: Cannot change ownership to uid 501, gid 50: Operation not permitted
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: ./._manifest: Cannot change ownership to uid 501, gid 50: Operation not permitted
+tar: Ignoring unknown extended 
+[00:36:17] deleted l36sotrrmof9m0
+[00:36:23] pods after: 0
+{
+  "error": "RunPodError: repo sync failed: tar: ._.: Cannot change ownership to uid 501, gid 50: Operation not permitted\ntar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'\ntar: ./._manifest: Cannot change ownership to uid 501, gid 50: Operation not permitted\ntar: Ignoring unknown extended ",
+  "gpu": "NVIDIA RTX PRO 4500 Blackwell",
+  "pod_id": "l36sotrrmof9m0",
+  "pods_after": 0,
+  "script": "smoke.py",
+  "started": "2026-08-21T14:34:20Z"
+}
