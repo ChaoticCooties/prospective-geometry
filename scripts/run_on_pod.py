@@ -135,12 +135,15 @@ def main() -> int:
         log("syncing repo")
         # tar over SSH rather than rsync: the pod image has tar but not rsync,
         # and this needs nothing installed on either end.
+        # COPYFILE_DISABLE stops macOS tar emitting AppleDouble "._*" entries,
+        # and --no-same-owner stops GNU tar on the pod failing on ownership it
+        # cannot set. Without both, the transfer exits non-zero on warnings.
         sync = subprocess.run(
-            f"tar czf - -C {ROOT} "
+            f"COPYFILE_DISABLE=1 tar czf - -C {ROOT} "
             f"--exclude=.git --exclude=reports/remote --exclude=audit/artifacts_full "
-            f"--exclude=__pycache__ --exclude=.pytest_cache . | "
+            f"--exclude=__pycache__ --exclude=.pytest_cache --exclude='._*' . | "
             f"ssh {' '.join(SSH_OPTS)} -p {port} root@{host} "
-            f"'mkdir -p {REMOTE_REPO} && tar xzf - -C {REMOTE_REPO}'",
+            f"'mkdir -p {REMOTE_REPO} && tar xzf - --no-same-owner -C {REMOTE_REPO}'",
             shell=True, capture_output=True, text=True, timeout=900,
         )
         if sync.returncode != 0:
@@ -169,7 +172,7 @@ def main() -> int:
         fetch = subprocess.run(
             f"ssh {' '.join(SSH_OPTS)} -p {port} root@{host} "
             f"'tar czf - -C /workspace/pgeom/artifacts . 2>/dev/null' | "
-            f"tar xzf - -C {local}",
+            f"tar xzf - --no-same-owner -C {local}",
             shell=True, capture_output=True, text=True, timeout=900,
         )
         status["fetch_rc"] = fetch.returncode

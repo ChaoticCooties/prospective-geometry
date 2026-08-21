@@ -296,6 +296,24 @@ objective at least **2×** more than the other's, and the matrix condition proxy
 is ≤ **10**. Without that, A and B are called **distinct readouts** and nothing
 stronger.
 
+### Execution parameters
+
+Fixed on 2026-08-22, before any Phase-1 outcome existed, and recorded in
+`manifest/freeze.json` and in the run artifact. They are implementation details
+the original freeze did not name, not changes to any threshold or statistic.
+
+| Parameter | Value | Why this value |
+| --- | --- | --- |
+| Decoding | greedy, no sampling | deterministic, so a condition's outcome is reproducible |
+| New tokens per generation | 160 | comfortably past the 240-character refusal window while leaving enough text to judge coherence and topic |
+| Package A dose | `alpha = 1.0 * sigma`, sigma from that block's nomination prompts | natural range by construction, not extreme steering |
+| Package B dose | bisection over [0, 12] logits, 18 steps | source-matched: whatever bias brings harmful instruction mass to that block's own matched benign level |
+| Sham layer for A | 2 | a site the objective does not name, far from layer 14 |
+| Sham span for B | the template prefix | same heads and dose, at a key span the objective does not name |
+| Reachability bank | 512 tokens, key `pgeom-admission-bank-v1` | shared by both objectives, so a difference cannot come from a different search space |
+| Mutation slot | position 2 of 4 | shared by both objectives |
+| Seed | 9100 | outside the forbidden 200-205 range |
+
 ### Stop rule
 
 Any failure means stop before GCG. No target replacement, no threshold

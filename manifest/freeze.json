@@ -11,7 +11,7 @@
   },
   "files": {
     "CLAIMS.md": "dc95fc7612c6dcc79ffa424cae4bfff6b608240d3e51b060fc52ede91089a00b",
-    "PROTOCOL.md": "b3357b16011eab33f8dcbc63dd4f094c182175ec132cd2cfd473c9efa099f636",
+    "PROTOCOL.md": "5ea7f5936f0002f8d9dc06d5ae2c8f114bc682dc86324a369d40eb44bdb7ccb0",
     "README.md": "56398fdd13be1fa4884adad29c423595aa8e10331ca2ba6f4432b1ee31726a17",
     "audit/artifacts_full/archive_counts.json": "4ec33c67ec0ff9b99015e83baf203582baa8a9f02baa6890f7a1da8432484281",
     "audit/artifacts_full/archive_exact.h64.gz": "7dd221db54e7cfc11db9e0911637092e3e84b3a0fc8b286575d0ed12777028c5",
@@ -36,10 +36,10 @@
     "reports/HOSTILE_REVIEW_PHASE0.md": "673700690c68ff1b3c43bb18aadabc300892ee5bd4fc17f20500ad298426e51a",
     "reports/durability_verification.json": "725a96454183c71e0abb1e7934cae6c04db4fd1bc6cc04c3b2c11bd652ef0fe7",
     "reports/nullsim_report.json": "e396ec01bb40bd47fd40580e59bf0f58ca69557ccef36f0c131efcc506b919d0",
-    "scripts/build_manifest.py": "81994c6fdc3f30c4438d6781165fecfaeaf19531c87b8f5b1700b0400876c721",
+    "scripts/build_manifest.py": "0811c180e033ec29c5fb9df0aa274ad6df0a8853a7bc031004779ba6a0131baf",
     "scripts/pods.py": "81b837672a442c990ebfc80a1ff9ef0426e9c58bfec3a01973f9de3edf737133",
     "scripts/provision_volume.py": "e97036b5e6bbef04b097bdd9ad97bc6fc504ed960985d78ee04c6434a309702c",
-    "scripts/run_on_pod.py": "4c92bfc88c61045174b30705166e7e40ed0dca5127435f4238159689cfc0d287",
+    "scripts/run_on_pod.py": "536c25c4fcf3945f267947c3de8c78038666342d3aa66c72045cff41c6b9cdec",
     "scripts/secret_scan.sh": "6081f080cbf4c88c41f17d5eb5f4cff82652a4f5ba1c8296fcd464cd614c2191",
     "scripts/verify_freeze.py": "fadd31bcdf1bb920764b5a5d9f4ce4476a7dd8bd961588eae5b62a6d4dca1735",
     "scripts/verify_volume_durability.py": "3ce3f674110c40e29d0d01c42797739a3de9a70094011a9cdbb6140b3a1cb37c",
@@ -79,6 +79,23 @@
     "admission": {
       "blocks_required": 7,
       "blocks_total": 8,
+      "execution": {
+        "bias_bisection_steps": 18,
+        "bias_search_logits": [
+          0.0,
+          12.0
+        ],
+        "decoding": "greedy",
+        "dose_c_sigma": 1.0,
+        "fixed_on": "2026-08-22, before any Phase-1 outcome",
+        "max_new_tokens": 160,
+        "mutation_position": 2,
+        "reachability_bank_key": "pgeom-admission-bank-v1",
+        "reachability_bank_size": 512,
+        "seed": 9100,
+        "sham_layer": 2,
+        "sham_span_for_b": "template prefix"
+      },
       "hard_cap_usd": 5.0,
       "max_abs_spearman": 0.7,
       "max_benign_utility_loss_pp": 5.0,
@@ -189,9 +206,9 @@
       "requires_single_leading_space": true
     }
   },
-  "git_commit_at_build": "cc83762b4e8f473ef5157a4a78ccda58a432513e",
+  "git_commit_at_build": "61863824c83c3a8e9f6146e03e12955288d7131b",
   "gpu_provisioned": false,
-  "manifest_sha256": "caab03cd483d2c3a73cc8b30347cb7ae460f1f3100e304a24ca325f6aaf14cdd",
+  "manifest_sha256": "0df94730b6215ae3c6df8a0ca832adec3086866eef0778bc626227c7799bce19",
   "manifest_version": 1,
   "phase_frozen": 0,
   "study": "prospective-geometry",
