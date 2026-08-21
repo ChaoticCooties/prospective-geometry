@@ -19,7 +19,11 @@ from pgeom.ops import RunPodClient  # noqa: E402
 
 NAME = "pgeom-clean"
 SIZE_GB = 30          # ~16 GB model weights plus checkpoints and artifacts
-DATACENTER = "US-TX-1"
+# Only three storage-capable datacenters had GPU capacity when probed:
+# EU-RO-1 (RTX PRO 4500 Blackwell 32GB, RTX 4090), US-CA-2 and US-IL-1 (RTX 4090
+# only). EU-RO-1 wins on VRAM headroom for the GCG backward pass at the same
+# price. US-KS-2, where the pre-existing tara_gcg volume lives, had none.
+DATACENTER = "EU-RO-1"
 
 
 def main() -> int:
