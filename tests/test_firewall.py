@@ -74,3 +74,63 @@ def test_real_archive_is_rejected_by_default_configuration():
 
 def test_new_repo_is_not_rejected():
     assert not is_archive_path(Path(__file__).resolve().parents[1])
+
+
+# --- Shared-volume containment ----------------------------------------------
+# The study reuses a network volume that already holds a previous study's work.
+# Marker ascent cannot protect there, because the volume carries no marker file,
+# so containment is the only guard and it must be exercised directly.
+
+from pgeom.firewall import (  # noqa: E402
+    SHARED_ROOT_ENV,
+    STUDY_SUBDIR_ENV,
+    shared_root_policy,
+)
+
+
+def test_shared_volume_paths_outside_the_study_subdir_fail_closed(monkeypatch, tmp_path):
+    root = tmp_path / "workspace"
+    (root / "tara_gcg_runs").mkdir(parents=True)
+    (root / "pgeom").mkdir()
+    monkeypatch.setenv(SHARED_ROOT_ENV, str(root))
+    monkeypatch.setenv(STUDY_SUBDIR_ENV, str(root / "pgeom"))
+    monkeypatch.setenv(ARCHIVE_ROOT_ENV, str(tmp_path / "no_archive_here"))
+
+    assert is_archive_path(root / "tara_gcg_runs" / "suffixes.json")
+    assert is_archive_path(root / "stray.pt")
+    assert "shared storage" in archive_reason(root / "stray.pt")
+
+
+def test_study_subdir_on_the_shared_volume_is_allowed(monkeypatch, tmp_path):
+    root = tmp_path / "workspace"
+    (root / "pgeom" / "phase3").mkdir(parents=True)
+    monkeypatch.setenv(SHARED_ROOT_ENV, str(root))
+    monkeypatch.setenv(STUDY_SUBDIR_ENV, str(root / "pgeom"))
+    monkeypatch.setenv(ARCHIVE_ROOT_ENV, str(tmp_path / "no_archive_here"))
+    assert not is_archive_path(root / "pgeom" / "phase3" / "checkpoint.json")
+
+
+def test_containment_is_on_by_default(monkeypatch):
+    """Absent configuration, the protective default applies rather than nothing."""
+    monkeypatch.delenv(SHARED_ROOT_ENV, raising=False)
+    monkeypatch.delenv(STUDY_SUBDIR_ENV, raising=False)
+    policy = shared_root_policy()
+    assert policy is not None
+    root, subdir = policy
+    assert str(root) == "/workspace"
+    assert str(subdir) == "/workspace/pgeom"
+
+
+def test_misconfigured_subdir_outside_root_is_rejected_loudly(monkeypatch, tmp_path):
+    """A subdir outside the root would whitelist everything, so it must raise."""
+    monkeypatch.setenv(SHARED_ROOT_ENV, str(tmp_path / "workspace"))
+    monkeypatch.setenv(STUDY_SUBDIR_ENV, str(tmp_path / "elsewhere"))
+    with pytest.raises(ValueError, match="not inside shared root"):
+        shared_root_policy()
+
+
+def test_containment_can_be_disabled_only_explicitly(monkeypatch, tmp_path):
+    monkeypatch.setenv(SHARED_ROOT_ENV, "none")
+    monkeypatch.setenv(ARCHIVE_ROOT_ENV, str(tmp_path / "no_archive"))
+    assert shared_root_policy() is None
+    assert not is_archive_path("/workspace/tara_gcg_runs/x.json")

@@ -32,6 +32,19 @@ DEFAULT_ARCHIVE_ROOTS = ("/Users/chaoticcooties/Desktop/renegade/archive",)
 #: nests anywhere near this deep.
 MAX_ASCENT = 64
 
+#: A shared storage root that also holds work from another study, and the one
+#: subdirectory inside it this study may touch. Everything else under the root
+#: fails closed.
+#:
+#: This exists because the study reuses the pre-existing `tara_gcg` network
+#: volume rather than a fresh one. Marker ascent cannot help there: the volume
+#: carries no ARCHIVE_MANIFEST.md, so without this rule a stray path into the
+#: prior work would look perfectly clean.
+SHARED_ROOT_ENV = "PGEOM_SHARED_ROOT"
+STUDY_SUBDIR_ENV = "PGEOM_STUDY_SUBDIR"
+DEFAULT_SHARED_ROOT = "/workspace"
+DEFAULT_STUDY_SUBDIR = "/workspace/pgeom"
+
 
 class ArchiveAccessError(RuntimeError):
     """Raised when a scientific input resolves inside the archive."""
@@ -63,6 +76,26 @@ def _under_root(resolved: Path, root: Path) -> bool:
     return True
 
 
+def shared_root_policy() -> tuple[Path, Path] | None:
+    """Return (shared_root, study_subdir), or None when no shared root is set.
+
+    Returns None only when the shared root is explicitly disabled, so the
+    protective default applies unless someone turns it off deliberately.
+    """
+    root = os.environ.get(SHARED_ROOT_ENV, DEFAULT_SHARED_ROOT)
+    if not root or root.lower() in {"none", "off", "disabled"}:
+        return None
+    subdir = os.environ.get(STUDY_SUBDIR_ENV, DEFAULT_STUDY_SUBDIR)
+    root_p = Path(root).expanduser().resolve(strict=False)
+    sub_p = Path(subdir).expanduser().resolve(strict=False)
+    if not _under_root(sub_p, root_p):
+        raise ValueError(
+            f"study subdirectory {sub_p} is not inside shared root {root_p}; "
+            "the containment rule would let every path through"
+        )
+    return root_p, sub_p
+
+
 def _marker_ancestor(resolved: Path) -> Path | None:
     """Return the nearest ancestor containing the archive marker, if any."""
     current = resolved if resolved.is_dir() else resolved.parent
@@ -88,6 +121,15 @@ def archive_reason(path: str | os.PathLike[str]) -> str | None:
     marker = _marker_ancestor(resolved)
     if marker is not None:
         return f"path has archive marker {ARCHIVE_MARKER} at ancestor {marker}"
+
+    policy = shared_root_policy()
+    if policy is not None:
+        root, subdir = policy
+        if _under_root(resolved, root) and not _under_root(resolved, subdir):
+            return (
+                f"path is on shared storage {root} but outside this study's "
+                f"subdirectory {subdir}; that space holds another study's work"
+            )
     return None
 
 

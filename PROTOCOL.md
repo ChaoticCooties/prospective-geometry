@@ -508,4 +508,38 @@ See [CLAIMS.md](CLAIMS.md) for what prior work already occupies.
 ## Deviation register
 
 Deviations from this protocol are appended here with date, reason, and the claim
-consequence. The register is empty at freeze.
+consequence.
+
+### D1 — 2026-08-21 — artifacts share a volume with prior GCG work
+
+**Deviation.** Phase 0 froze on the assumption that study artifacts live on
+storage dedicated to this study. They will instead live on the pre-existing
+RunPod network volume `tara_gcg` (50 GB, US-KS-2), which already holds work from
+the archived Renegade experiments, under a dedicated subdirectory
+`/workspace/pgeom`.
+
+**Reason.** Operator decision, taken after the alternative was put twice with
+costs attached.
+
+**Mitigation.** `pgeom.firewall` gained shared-root containment: any path under
+`/workspace` that is not under `/workspace/pgeom` raises `ArchiveAccessError`.
+Containment is on by default and can only be switched off by explicitly setting
+`PGEOM_SHARED_ROOT` to `none`. A study subdirectory configured outside the
+shared root raises rather than silently whitelisting everything. Five tests
+cover it.
+
+**Residual risk, not closed.** Archived artifacts are mounted inside the study
+runtime. The firewall stops this study's own code from resolving a path into
+them, but it cannot stop a library, a shell command, or a future edit from
+reading that space, and it leaves no positive evidence that nothing was read. A
+reviewer is entitled to discount the "fully prospective" framing on this basis.
+
+**Claim consequence.** The paper must disclose that searches ran on storage
+shared with prior suffix work, and must not claim storage isolation. Every other
+clean-room guarantee — prompts, seeds, initializations, fitted artifacts,
+thresholds, and the absence of any imported infrastructure — is unaffected and
+still holds.
+
+**Cost consequence.** `tara_gcg` is pinned to US-KS-2, where the cheapest GPU at
+or above 24 GB is $0.500/hr against $0.330/hr for an A6000 elsewhere. Budget
+forecasts in Phase 2 use $0.500/hr.

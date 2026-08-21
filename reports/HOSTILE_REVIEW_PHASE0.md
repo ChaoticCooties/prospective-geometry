@@ -82,6 +82,18 @@ statistic is low-resolution and a single noisy vertex moves it. *Status:
 inherent to width four, which is fixed by the research question. Mitigated by
 averaging two cross faces per block and requiring all six blocks.*
 
+**11. The searches run on storage that holds the previous suffix study.**
+Artifacts live under `/workspace/pgeom` on the `tara_gcg` volume, which also
+holds archived Renegade work. `pgeom.firewall` fails closed on any path under
+`/workspace` outside the study subdirectory, so this study's code cannot resolve
+into the prior work — but containment is a guard on *our* code, not proof that
+nothing was read, and it does not bind libraries, shell commands, or later
+edits. For a paper whose selling point is being fully prospective, this is the
+cheapest available attack on it, and it is the one item in this review I cannot
+close. Recorded as deviation D1 in the protocol. *Status: accepted by the
+operator after the alternative was declined twice. Disclosed rather than
+mitigated away.*
+
 ## Attacks that would not land
 
 **"You picked the containment threshold after seeing the overlap."** No. The

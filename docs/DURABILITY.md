@@ -34,10 +34,18 @@ model revision, with no dependency on this laptop.
 Status: **defined, not yet verified.** Verification needs a RunPod API key,
 which is not present on this machine.
 
+Decision: the study reuses the existing `tara_gcg` volume (50 GB, US-KS-2)
+rather than creating a dedicated one. See deviation D1 in the protocol for the
+clean-room consequence and the containment mitigation.
+
 Design:
 
-- one RunPod network volume, mounted at `/workspace/persist`, outliving every
-  pod;
+- the existing `tara_gcg` network volume, mounted at `/workspace`, outliving
+  every pod;
+- this study writes **only** under `/workspace/pgeom`; `pgeom.firewall` raises
+  on any other path under `/workspace`;
+- the study never writes an `ARCHIVE_MANIFEST.md` onto the volume, which would
+  make its own subdirectory fail closed;
 - the repository is cloned to `/workspace/prospective-geometry` on pod start,
   which is pod-local and disposable;
 - every artifact that costs money to recompute is written under
@@ -81,9 +89,10 @@ a fresh volume elsewhere, on top of the clean-room objection. The cheapest
 listed GPU overall, the A5000 at $0.160/hr, showed no stock in any datacenter
 at the time of checking.
 
-Recommended: a fresh volume in **US-TX-1** with the **RTX A6000 at $0.330/hr**.
-48 GB removes any out-of-memory risk for an 8B model with a GCG backward pass,
-and the datacenter is unrelated to the archived work.
+Recommended a fresh volume in US-TX-1 with an A6000 at $0.330/hr. The operator
+chose to reuse `tara_gcg` instead, so the study runs in **US-KS-2** on the
+cheapest GPU at or above 24 GB available there, currently the **RTX PRO 4500
+Blackwell, 32 GB, at $0.500/hr**. Budget forecasts use that rate.
 
 Account balance at freeze: **$21.37**, which is below the study's $25-30 target
 band. Standing spend is $0.005/hr for the existing 50 GB volume.
