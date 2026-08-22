@@ -57,6 +57,7 @@ HF_CACHE = "/workspace/pgeom/hf"      # model weights live on the volume, cached
 POD_TOKEN = "/root/.hf_token"         # pod-local, never the volume: the volume outlives the pod
 REMOTE_LOG = "/workspace/pgeom/artifacts/run.log"
 REMOTE_DONE = "/workspace/pgeom/artifacts/run.done"   # holds the remote exit code
+REMOTE_LAUNCH = "/workspace/pgeom/artifacts/launch.sh"
 PUBKEY = (Path.home() / ".ssh" / "id_ed25519.pub").read_text().strip()
 TOKEN_PATH = Path.home() / ".cache" / "huggingface" / "token"
 SSH_OPTS = ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null",
@@ -264,26 +265,36 @@ def main() -> int:
         status["remote_versions"] = ver.strip()
 
         log("running remote script (detached)")
-        # Detached with setsid + nohup, then polled over fresh SSH connections.
-        # A single long-lived SSH channel is a single point of failure: the first
-        # admission attempt died at rc=255 eighteen minutes in because the
-        # connection dropped, discarding the work even though the pod was healthy.
-        remote_cmd = (
-            f"set -o pipefail; mkdir -p {HF_CACHE} /workspace/pgeom/artifacts && "
+        # The launcher is written to a file and started by a separate command
+        # that ends in an echo, so the foreground remote shell produces output
+        # and exits, closing the SSH channel. Backgrounding inside a
+        # capture-output SSH call does not return: the first attempt at this
+        # hung for the full timeout even though the job had started.
+        launcher = (
+            f"#!/usr/bin/env bash\n"
+            f"set -uo pipefail\n"
+            f"mkdir -p {HF_CACHE} /workspace/pgeom/artifacts\n"
             # HF_HUB_CACHE, not HF_HOME: HF_HOME also redirects the token lookup,
             # which would put the credential on the network volume that outlives
-            # the pod. The token is read from a pod-local file and expanded inside
-            # the pod's shell, so its value never appears in the ssh command line.
-            f'export HF_HUB_CACHE={HF_CACHE} HF_TOKEN="$(cat {POD_TOKEN})" '
-            f"PYTHONPATH={REMOTE_REPO}/src PYTHONUNBUFFERED=1 && "
-            f"cd {REMOTE_REPO} && "
-            f"rm -f {REMOTE_DONE} && "
-            f"setsid nohup sh -c "
-            f"'python3 -u scripts/remote/{args.script} {args.args} "
-            f"> {REMOTE_LOG} 2>&1; echo $? > {REMOTE_DONE}' "
-            f"> /dev/null 2>&1 < /dev/null &"
+            # the pod. The token is read from a pod-local file, so its value never
+            # appears in an ssh command line either.
+            f"export HF_HUB_CACHE={HF_CACHE}\n"
+            f"export HF_TOKEN=\"$(cat {POD_TOKEN})\"\n"
+            f"export PYTHONPATH={REMOTE_REPO}/src PYTHONUNBUFFERED=1\n"
+            f"cd {REMOTE_REPO}\n"
+            f"python3 -u scripts/remote/{args.script} {args.args} > {REMOTE_LOG} 2>&1\n"
+            f"echo $? > {REMOTE_DONE}\n"
         )
-        ssh(host, port, remote_cmd, timeout=120)
+        ssh(host, port, f"mkdir -p /workspace/pgeom/artifacts && "
+                        f"rm -f {REMOTE_DONE} {REMOTE_LOG} && "
+                        f"cat > {REMOTE_LAUNCH} && chmod +x {REMOTE_LAUNCH}",
+            stdin_text=launcher, timeout=120)
+        rc, out = ssh(host, port,
+                      f"setsid nohup bash {REMOTE_LAUNCH} >/dev/null 2>&1 </dev/null & "
+                      f"sleep 1; echo LAUNCHED", timeout=120)
+        if "LAUNCHED" not in out:
+            raise RunPodError(f"could not start the remote job: {out[:200]}")
+        log("  launched; polling")
         status["remote_rc"] = poll_until_done(host, port, deadline=time.time() + args.timeout)
 
         log("fetching artifacts")

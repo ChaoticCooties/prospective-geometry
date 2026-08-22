@@ -1,28 +1,18 @@
-[08:37:18] pod 0bgf9akdouicr4 on NVIDIA GeForce RTX 4090
-[08:48:34] ssh 213.173.110.227:13232
-[08:48:39] syncing repo
-[08:48:52] installing pinned dependencies
-[08:49:08] remote versions: 2.6.0+cu124 4.49.0 True
-[08:49:08] running remote script
-
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
-Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  1.92it/s]
-Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.63it/s]
-Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  1.59it/s]
-Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.35it/s]
-Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.04it/s]
-Read from remote host 213.173.110.227: Connection reset by peer
-client_loop: send disconnect: Broken pipe
-[09:07:24] fetching artifacts
-[09:07:30] deleted 0bgf9akdouicr4
-[09:15:55] pods after: 0
+[15:58:52] pod 6vcslhlyfup6dh on NVIDIA GeForce RTX 4090
+[16:00:00] ssh 213.173.109.83:18422
+[16:00:04] syncing repo
+[16:00:18] installing pinned dependencies
+[16:00:33] remote versions: 2.6.0+cu124 4.49.0 True
+[16:00:33] running remote script (detached)
+[16:02:33] TimeoutExpired: Command '['ssh', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=ERROR', '-o', 'ConnectTimeout=15', '-o', 'ServerAliveInterval=30', '-o', 'ServerAliveCountMax=240', '-p', '18422', 'root@213.173.109.83', 'set -o pipefail; mkdir -p /workspace/pgeom/hf /workspace
+[16:02:34] deleted 6vcslhlyfup6dh
+[16:02:41] pods after: 0
 {
-  "fetch_rc": 0,
+  "error": "TimeoutExpired: Command '['ssh', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=ERROR', '-o', 'ConnectTimeout=15', '-o', 'ServerAliveInterval=30', '-o', 'ServerAliveCountMax=240', '-p', '18422', 'root@213.173.109.83', 'set -o pipefail; mkdir -p /workspace/pgeom/hf /workspace",
   "gpu": "NVIDIA GeForce RTX 4090",
-  "pod_id": "0bgf9akdouicr4",
+  "pod_id": "6vcslhlyfup6dh",
   "pods_after": 0,
-  "remote_rc": 255,
   "remote_versions": "2.6.0+cu124 4.49.0 True",
   "script": "fit_and_admit.py",
-  "started": "2026-08-21T22:37:16Z"
+  "started": "2026-08-22T05:58:50Z"
 }
