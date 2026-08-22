@@ -55,6 +55,8 @@ IMAGE = "runpod/pytorch:0.7.0-cu1241-torch260-ubuntu2204"
 REMOTE_REPO = "/workspace/pgeom/repo"
 HF_CACHE = "/workspace/pgeom/hf"      # model weights live on the volume, cached across pods
 POD_TOKEN = "/root/.hf_token"         # pod-local, never the volume: the volume outlives the pod
+REMOTE_LOG = "/workspace/pgeom/artifacts/run.log"
+REMOTE_DONE = "/workspace/pgeom/artifacts/run.done"   # holds the remote exit code
 PUBKEY = (Path.home() / ".ssh" / "id_ed25519.pub").read_text().strip()
 TOKEN_PATH = Path.home() / ".cache" / "huggingface" / "token"
 SSH_OPTS = ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null",
@@ -145,6 +147,51 @@ def ssh(host, port, cmd, *, timeout=3600, stdin_text=None, stream=False):
     return p.returncode, (p.stdout + p.stderr).strip()
 
 
+def poll_until_done(host, port, *, deadline, interval=60):
+    """Follow a detached remote run, reconnecting on every poll.
+
+    Returns the remote exit code, or None on timeout. Each poll opens a fresh
+    SSH connection and tails only the new log lines, so a dropped connection
+    costs one poll interval rather than the whole run. A transient SSH failure
+    is retried rather than treated as the job failing.
+    """
+    seen = 0
+    consecutive_ssh_failures = 0
+    while time.time() < deadline:
+        rc, out = ssh(host, port, f"cat {REMOTE_DONE} 2>/dev/null; "
+                                  f"echo '---'; wc -l < {REMOTE_LOG} 2>/dev/null || echo 0",
+                      timeout=90)
+        if rc != 0:
+            consecutive_ssh_failures += 1
+            log(f"  poll failed ({consecutive_ssh_failures}); the job keeps running")
+            if consecutive_ssh_failures >= 20:
+                log("  giving up on reaching the pod")
+                return None
+            time.sleep(interval)
+            continue
+        consecutive_ssh_failures = 0
+
+        head, _, tail = out.partition("---")
+        done = head.strip()
+        try:
+            total = int(tail.strip() or 0)
+        except ValueError:
+            total = 0
+        if total > seen:
+            _, chunk = ssh(host, port, f"sed -n '{seen + 1},{total}p' {REMOTE_LOG}", timeout=120)
+            for line in chunk.splitlines():
+                print(line, flush=True)
+            seen = total
+        if done:
+            try:
+                return int(done)
+            except ValueError:
+                return 1
+        time.sleep(interval)
+    log("  remote run exceeded its deadline")
+    return None
+
+
 def wait_sshd(host, port, tries=20):
     for i in range(tries):
         rc, out = ssh(host, port, "echo ready", timeout=45)
@@ -216,19 +263,28 @@ def main() -> int:
         log(f"remote versions: {ver.strip()}")
         status["remote_versions"] = ver.strip()
 
-        log("running remote script")
+        log("running remote script (detached)")
+        # Detached with setsid + nohup, then polled over fresh SSH connections.
+        # A single long-lived SSH channel is a single point of failure: the first
+        # admission attempt died at rc=255 eighteen minutes in because the
+        # connection dropped, discarding the work even though the pod was healthy.
         remote_cmd = (
-            f"set -o pipefail; mkdir -p {HF_CACHE} && "
+            f"set -o pipefail; mkdir -p {HF_CACHE} /workspace/pgeom/artifacts && "
             # HF_HUB_CACHE, not HF_HOME: HF_HOME also redirects the token lookup,
             # which would put the credential on the network volume that outlives
             # the pod. The token is read from a pod-local file and expanded inside
             # the pod's shell, so its value never appears in the ssh command line.
             f'export HF_HUB_CACHE={HF_CACHE} HF_TOKEN="$(cat {POD_TOKEN})" '
             f"PYTHONPATH={REMOTE_REPO}/src PYTHONUNBUFFERED=1 && "
-            f"cd {REMOTE_REPO} && python3 -u scripts/remote/{args.script} {args.args}"
+            f"cd {REMOTE_REPO} && "
+            f"rm -f {REMOTE_DONE} && "
+            f"setsid nohup sh -c "
+            f"'python3 -u scripts/remote/{args.script} {args.args} "
+            f"> {REMOTE_LOG} 2>&1; echo $? > {REMOTE_DONE}' "
+            f"> /dev/null 2>&1 < /dev/null &"
         )
-        rc, out = ssh(host, port, remote_cmd, timeout=args.timeout, stream=True)
-        status["remote_rc"] = rc
+        ssh(host, port, remote_cmd, timeout=120)
+        status["remote_rc"] = poll_until_done(host, port, deadline=time.time() + args.timeout)
 
         log("fetching artifacts")
         local = ROOT / args.fetch

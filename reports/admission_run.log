@@ -1,43 +1,28 @@
-[05:45:15]   NVIDIA GeForce RTX 4090 unavailable
-[05:45:16]   NVIDIA RTX A5000 unavailable
-[05:45:17]   NVIDIA GeForce RTX 3090 unavailable
-[05:45:18]   NVIDIA RTX A6000 unavailable
-[05:45:19]   NVIDIA A40 unavailable
-[05:53:40]   NVIDIA L40 unavailable
-[05:53:41]   NVIDIA L40S unavailable
-[05:53:42]   NVIDIA RTX 6000 Ada Generation unavailable
-[05:53:42]   no capacity (sweep 1); retrying in 60s
-[06:03:03] pod jl1g72y5aj5tah on NVIDIA GeForce RTX 4090
-[06:11:59] ssh 213.173.102.85:11151
-[06:12:03] syncing repo
-[06:12:17] installing pinned dependencies
-[06:12:34] remote versions: 2.6.0+cu124 4.49.0 True
-[06:12:34] running remote script
+[08:37:18] pod 0bgf9akdouicr4 on NVIDIA GeForce RTX 4090
+[08:48:34] ssh 213.173.110.227:13232
+[08:48:39] syncing repo
+[08:48:52] installing pinned dependencies
+[08:49:08] remote versions: 2.6.0+cu124 4.49.0 True
+[08:49:08] running remote script
 
 Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
-Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  1.56it/s]
-Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.41it/s]
-Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.35it/s]
-Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.89it/s]
-Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.68it/s]
-Traceback (most recent call last):
-  File "/workspace/pgeom/repo/scripts/remote/fit_and_admit.py", line 459, in <module>
-    raise SystemExit(main())
-  File "/workspace/pgeom/repo/scripts/remote/fit_and_admit.py", line 401, in main
-    rb, mb = engine.readouts(engine.layouts(fit_b))
-  File "/workspace/pgeom/repo/scripts/remote/fit_and_admit.py", line 81, in layouts
-    raise RuntimeError(f"non-canonical suffix on prompt {r['id']}")
-RuntimeError: non-canonical suffix on prompt 74ab6a48928a7f90
-[06:30:25] fetching artifacts
-[06:30:31] deleted jl1g72y5aj5tah
-[06:30:37] pods after: 0
+Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  1.92it/s]
+Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.63it/s]
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  1.59it/s]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.35it/s]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.04it/s]
+Read from remote host 213.173.110.227: Connection reset by peer
+client_loop: send disconnect: Broken pipe
+[09:07:24] fetching artifacts
+[09:07:30] deleted 0bgf9akdouicr4
+[09:15:55] pods after: 0
 {
   "fetch_rc": 0,
   "gpu": "NVIDIA GeForce RTX 4090",
-  "pod_id": "jl1g72y5aj5tah",
+  "pod_id": "0bgf9akdouicr4",
   "pods_after": 0,
-  "remote_rc": 1,
+  "remote_rc": 255,
   "remote_versions": "2.6.0+cu124 4.49.0 True",
   "script": "fit_and_admit.py",
-  "started": "2026-08-21T19:45:13Z"
+  "started": "2026-08-21T22:37:16Z"
 }

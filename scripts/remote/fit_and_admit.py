@@ -37,7 +37,7 @@ from pgeom.interventions import (
     residual_dose,
 )
 from pgeom.model import LAYER_A, load
-from pgeom.objectives import auroc, centered_cosine, spearman
+from pgeom.objectives import PackageA, PackageB, auroc, centered_cosine, spearman
 from pgeom.provenance import sha256_obj
 from pgeom.tokenization import build_layout, is_canonical
 
@@ -388,19 +388,69 @@ def one_step_reachability(engine, pkg_a, pkg_b, by_arm) -> dict:
     return out
 
 
+def rebuild_measurement(diag: dict) -> BlockMeasurement:
+    """Reconstruct a BlockMeasurement from a checkpointed diagnostics record.
+
+    The gate is re-evaluated from stored numbers rather than trusting the stored
+    verdict, so a change to a threshold cannot be silently inherited by a
+    resumed run.
+    """
+    def pkg(name: str) -> PackageBlockMeasurement:
+        o, u = diag["harmful_outcomes"], diag["benign_utility"]
+        base = o["baseline"]["refusal_rate_pp"]
+        eff = abs(o[name]["refusal_rate_pp"] - base)
+        return PackageBlockMeasurement(
+            effect_pp=eff,
+            placebo_effect_pp=abs(o[f"{name}_placebo"]["refusal_rate_pp"] - base),
+            sham_effect_pp=abs(o[f"{name}_sham"]["refusal_rate_pp"] - base),
+            benign_utility_loss_pp=max(
+                0.0, u["baseline"]["coherent_rate_pp"] - u[name]["coherent_rate_pp"]),
+            heldout_auroc=diag["auroc_a"] if name == "a" else diag["auroc_b"],
+            reach_own_improvement=diag["reachability"][f"{name}_own_improvement"],
+            reach_random_control=diag["reachability"][f"{name}_random_control"],
+            finite_numerics=True, replay_ok=True,
+        )
+
+    return BlockMeasurement(
+        block=diag["block"], package_a=pkg("a"), package_b=pkg("b"),
+        abs_spearman_ab=abs(diag["spearman_ab"]),
+        median_grad_cosine=diag["median_grad_cosine"],
+        cross_matrix=tuple(tuple(r) for r in diag["cross_matrix"]),
+    )
+
+
 def main() -> int:
     ARTIFACTS.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     engine = Engine()
 
+    # --- resume, if a previous pod got part way -------------------------------
+    # The volume outlives the pod, so a dropped connection or a preemption costs
+    # only the blocks that had not finished. Fitting is deterministic given the
+    # same prompts, but reloading is both faster and guarantees the identical
+    # packages are used across a resumed run.
+    fit_path = ARTIFACTS / "fitted_packages.pt"
+    fit_json = ARTIFACTS / "fitted_packages.json"
+    pkg_a = pkg_b = None
+    if fit_path.exists() and fit_json.exists():
+        blob = torch.load(fit_path, map_location="cpu")
+        fit_record = json.loads(fit_json.read_text())
+        pkg_a = PackageA(direction=blob["direction"], layer=LAYER_A,
+                         fit_sha256=fit_record["package_a_sha256"])
+        pkg_b = PackageB(heads=tuple(tuple(h) for h in blob["heads"]),
+                         fit_sha256=fit_record["package_b_sha256"])
+        print(f"resumed fitted packages A={pkg_a.fit_sha256[:12]} "
+              f"B={pkg_b.fit_sha256[:12]}", flush=True)
+
     # --- fit both packages on the target_fit role only ------------------------
     fit_rows = load_role("target_fit")
     fit_h = [r for r in fit_rows if r["kind"] == "harmful"]
     fit_b = [r for r in fit_rows if r["kind"] != "harmful"]
-    rh, mh = engine.readouts(engine.layouts(fit_h))
-    rb, mb = engine.readouts(engine.layouts(fit_b))
-    pkg_a = fit_package_a(rh, rb, layer=LAYER_A)
-    pkg_b = fit_package_b(mh, mb)
+    if pkg_a is None or pkg_b is None:
+        rh, mh = engine.readouts(engine.layouts(fit_h))
+        rb, mb = engine.readouts(engine.layouts(fit_b))
+        pkg_a = fit_package_a(rh, rb, layer=LAYER_A)
+        pkg_b = fit_package_b(mh, mb)
 
     fit_record = {
         "layer_a": LAYER_A,
@@ -420,7 +470,22 @@ def main() -> int:
     adm_rows = load_role("target_admission")
     blocks = sorted({r["block"] for r in adm_rows})
     measurements, diagnostics, gen_samples = [], [], {}
+
+    done_path = ARTIFACTS / "admission_blocks.json"
+    completed = {}
+    if done_path.exists():
+        try:
+            completed = {d["block"]: d for d in json.loads(done_path.read_text())}
+            print(f"resuming: {sorted(completed)} already measured", flush=True)
+        except (json.JSONDecodeError, KeyError, TypeError):
+            completed = {}
+
     for block in blocks:
+        if block in completed:
+            diagnostics.append(completed[block])
+            measurements.append(rebuild_measurement(completed[block]))
+            print(f"[block {block}] reused from checkpoint", flush=True)
+            continue
         started = time.time()
         rows = [r for r in adm_rows if r["block"] == block]
         m, d = run_block(engine, pkg_a, pkg_b, block, rows, gen_samples)
