@@ -582,6 +582,24 @@ cross-role intent-identity pairs among the new roles. Totals are unchanged at
 **Claim consequence.** None. The prompts remain fresh, disjoint, provenanced,
 and unused by the archive.
 
+### D3 — 2026-08-22 — Phase 1 returned NO-GO; the study stops here
+
+**Outcome.** 0 of 8 admission blocks passed against a required 7. `$3.58` spent
+of the `$5` cap. Full detail in `reports/PHASE1_ADMISSION_REPORT.md`.
+
+**Consequence.** Phases 2 through 5 do not run. A and B remain candidate internal
+objective packages. No suffix was optimised, so no claim about token-reachable
+geometry is made or available.
+
+**Known defect in the run, disclosed rather than repaired.** Package B's
+intervention dose calibrated to zero in all eight blocks, so its causal arm was
+never applied and `B.causal_effect` is untested rather than refuted. Fixing it
+would not change the verdict: package A failed `causal_effect` and
+`heldout_prediction` in all eight blocks, making seven passing blocks
+unreachable. Re-running admission with a repaired B arm or an easier benign arm
+is not undertaken, because the protocol forbids a fallback dataset after a failed
+gate.
+
 **Mitigation.** `pgeom.firewall` gained shared-root containment: any path under
 `/workspace` that is not under `/workspace/pgeom` raises `ArchiveAccessError`.
 Containment is on by default and can only be switched off by explicitly setting

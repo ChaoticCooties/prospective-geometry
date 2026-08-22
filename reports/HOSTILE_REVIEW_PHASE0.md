@@ -101,6 +101,24 @@ close. Recorded as deviation D1 in the protocol. *Status: accepted by the
 operator after the alternative was declined twice. Disclosed rather than
 mitigated away.*
 
+**12. Package B's causal arm was never applied, and the report nearly said it
+failed.** The source-matched bisection presumes harmful prompts route more to the
+instruction span than benign ones. On the admission blocks they route less, so
+the dose floored at zero and the operator did nothing: the cross-intervention
+diagonal for B is exactly 0.000000 in all eight blocks. Had the diagonal not been
+recorded, `B.causal_effect` failing in 8/8 would have been written up as a null.
+*Status: caught, and the Phase 1 report states that B is untested rather than
+refuted. The lesson is that a matched-dose rule needs a sign check on the data it
+will be calibrated against, not just on the data it was fitted on.*
+
+**13. The fitting contrast and the admission contrast were mismatched in
+difficulty.** Packages were fitted on HarmfulQA versus Dolly and admitted against
+OR-Bench-toxic versus OR-Bench-hard-1k, which is built to look harmful. Held-out
+AUROC for package A inverted below 0.5 in seven of eight blocks. A CPU-only sign
+check before any GPU spend would have caught it. *Status: unfixed and disclosed;
+it is a primary reason for the NO-GO, and re-running against an easier benign arm
+is the forbidden fallback dataset.*
+
 ## Attacks that would not land
 
 **"You picked the containment threshold after seeing the overlap."** No. The

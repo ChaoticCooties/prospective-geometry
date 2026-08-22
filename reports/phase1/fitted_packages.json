@@ -1,0 +1,42 @@
+{
+  "fit_seconds": 41.9,
+  "layer_a": 14,
+  "n_fit_benign": 128,
+  "n_fit_harmful": 128,
+  "package_a_sha256": "7d57d1b8391a6b9e8dd363916e104da92280765b5bdf6c372a51d35e755a91a9",
+  "package_b_heads": [
+    [
+      3,
+      14
+    ],
+    [
+      4,
+      9
+    ],
+    [
+      6,
+      24
+    ],
+    [
+      9,
+      25
+    ],
+    [
+      16,
+      10
+    ],
+    [
+      18,
+      16
+    ],
+    [
+      22,
+      8
+    ],
+    [
+      26,
+      26
+    ]
+  ],
+  "package_b_sha256": "0d6d5815d73e6758aa8f63693447980892f5d4cfe397f92d197bbc6ddffcf852"
+}

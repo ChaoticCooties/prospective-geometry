@@ -1,0 +1,277 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.06it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.79it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  1.63it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.39it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.11it/s]
+resumed fitted packages A=7d57d1b8391a B=0d6d5815d73e
+{
+  "fit_seconds": 41.9,
+  "layer_a": 14,
+  "n_fit_benign": 128,
+  "n_fit_harmful": 128,
+  "package_a_sha256": "7d57d1b8391a6b9e8dd363916e104da92280765b5bdf6c372a51d35e755a91a9",
+  "package_b_heads": [
+    [
+      3,
+      14
+    ],
+    [
+      4,
+      9
+    ],
+    [
+      6,
+      24
+    ],
+    [
+      9,
+      25
+    ],
+    [
+      16,
+      10
+    ],
+    [
+      18,
+      16
+    ],
+    [
+      22,
+      8
+    ],
+    [
+      26,
+      26
+    ]
+  ],
+  "package_b_sha256": "0d6d5815d73e6758aa8f63693447980892f5d4cfe397f92d197bbc6ddffcf852"
+}
+[block A1] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect', 'B.heldout_prediction'] (919.1s)
+[block A2] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'B.causal_effect', 'B.heldout_prediction'] (941.2s)
+[block A3] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'B.causal_effect'] (940.7s)
+[block A4] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect', 'B.heldout_prediction', 'nonredundant_spearman'] (937.3s)
+[block A5] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect', 'B.heldout_prediction'] (956.1s)
+[block A6] passes=False failed=['A.beats_placebo', 'A.causal_effect', 'A.heldout_prediction', 'B.causal_effect', 'B.heldout_prediction'] (967.8s)
+[block A7] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'B.causal_effect', 'B.heldout_prediction'] (958.1s)
+[block A8] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect'] (917.2s)
+{
+  "blocks_required": 7,
+  "blocks_total": 8,
+  "causally_distinct": false,
+  "failing_blocks": {
+    "A1": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A2": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A3": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect"
+    ],
+    "A4": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect",
+      "B.heldout_prediction",
+      "nonredundant_spearman"
+    ],
+    "A5": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A6": [
+      "A.beats_placebo",
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A7": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A8": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect"
+    ]
+  },
+  "maximum_defensible_target_wording": "NO-GO. Admission failed; no suffix study follows. A and B remain candidate internal objective packages and may not be called targets, mechanisms, or distinct readouts.",
+  "n_blocks_passed": 0,
+  "passed": false,
+  "passing_blocks": [],
+  "per_block_conditions": {
+    "A1": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A2": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A3": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": true,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A4": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": false
+    },
+    "A5": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A6": {
+      "A.beats_placebo": false,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A7": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A8": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": true,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    }
+  }
+}

@@ -1,18 +1,302 @@
-[15:58:52] pod 6vcslhlyfup6dh on NVIDIA GeForce RTX 4090
-[16:00:00] ssh 213.173.109.83:18422
-[16:00:04] syncing repo
-[16:00:18] installing pinned dependencies
-[16:00:33] remote versions: 2.6.0+cu124 4.49.0 True
-[16:00:33] running remote script (detached)
-[16:02:33] TimeoutExpired: Command '['ssh', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=ERROR', '-o', 'ConnectTimeout=15', '-o', 'ServerAliveInterval=30', '-o', 'ServerAliveCountMax=240', '-p', '18422', 'root@213.173.109.83', 'set -o pipefail; mkdir -p /workspace/pgeom/hf /workspace
-[16:02:34] deleted 6vcslhlyfup6dh
-[16:02:41] pods after: 0
+[17:06:50] pod ledbpot5wyswxn on NVIDIA GeForce RTX 4090
+[17:07:04] ssh 213.173.110.104:10812
+[17:07:08] syncing repo
+[17:07:22] installing pinned dependencies
+[17:07:38] remote versions: 2.6.0+cu124 4.49.0 True
+[17:07:38] running remote script (detached)
+[17:07:48]   launched; polling
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
+Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.06it/s]
+Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.79it/s]
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  1.63it/s]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.39it/s]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.11it/s]
+resumed fitted packages A=7d57d1b8391a B=0d6d5815d73e
 {
-  "error": "TimeoutExpired: Command '['ssh', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=ERROR', '-o', 'ConnectTimeout=15', '-o', 'ServerAliveInterval=30', '-o', 'ServerAliveCountMax=240', '-p', '18422', 'root@213.173.109.83', 'set -o pipefail; mkdir -p /workspace/pgeom/hf /workspace",
+  "fit_seconds": 41.9,
+  "layer_a": 14,
+  "n_fit_benign": 128,
+  "n_fit_harmful": 128,
+  "package_a_sha256": "7d57d1b8391a6b9e8dd363916e104da92280765b5bdf6c372a51d35e755a91a9",
+  "package_b_heads": [
+    [
+      3,
+      14
+    ],
+    [
+      4,
+      9
+    ],
+    [
+      6,
+      24
+    ],
+    [
+      9,
+      25
+    ],
+    [
+      16,
+      10
+    ],
+    [
+      18,
+      16
+    ],
+    [
+      22,
+      8
+    ],
+    [
+      26,
+      26
+    ]
+  ],
+  "package_b_sha256": "0d6d5815d73e6758aa8f63693447980892f5d4cfe397f92d197bbc6ddffcf852"
+}
+[block A1] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect', 'B.heldout_prediction'] (919.1s)
+[block A2] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'B.causal_effect', 'B.heldout_prediction'] (941.2s)
+[block A3] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'B.causal_effect'] (940.7s)
+[block A4] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect', 'B.heldout_prediction', 'nonredundant_spearman'] (937.3s)
+[block A5] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect', 'B.heldout_prediction'] (956.1s)
+[block A6] passes=False failed=['A.beats_placebo', 'A.causal_effect', 'A.heldout_prediction', 'B.causal_effect', 'B.heldout_prediction'] (967.8s)
+[block A7] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'B.causal_effect', 'B.heldout_prediction'] (958.1s)
+[block A8] passes=False failed=['A.causal_effect', 'A.heldout_prediction', 'A.reach_beats_random', 'B.causal_effect'] (917.2s)
+{
+  "blocks_required": 7,
+  "blocks_total": 8,
+  "causally_distinct": false,
+  "failing_blocks": {
+    "A1": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A2": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A3": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect"
+    ],
+    "A4": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect",
+      "B.heldout_prediction",
+      "nonredundant_spearman"
+    ],
+    "A5": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A6": [
+      "A.beats_placebo",
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A7": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "B.causal_effect",
+      "B.heldout_prediction"
+    ],
+    "A8": [
+      "A.causal_effect",
+      "A.heldout_prediction",
+      "A.reach_beats_random",
+      "B.causal_effect"
+    ]
+  },
+  "maximum_defensible_target_wording": "NO-GO. Admission failed; no suffix study follows. A and B remain candidate internal objective packages and may not be called targets, mechanisms, or distinct readouts.",
+  "n_blocks_passed": 0,
+  "passed": false,
+  "passing_blocks": [],
+  "per_block_conditions": {
+    "A1": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A2": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A3": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": true,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A4": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": false
+    },
+    "A5": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A6": {
+      "A.beats_placebo": false,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A7": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": true,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": false,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    },
+    "A8": {
+      "A.beats_placebo": true,
+      "A.benign_utility": true,
+      "A.causal_effect": false,
+      "A.heldout_prediction": false,
+      "A.numerics_finite": true,
+      "A.reach_beats_random": false,
+      "A.reach_positive": true,
+      "A.replay_canonical": true,
+      "B.beats_placebo": true,
+      "B.benign_utility": true,
+      "B.causal_effect": false,
+      "B.heldout_prediction": true,
+      "B.numerics_finite": true,
+      "B.reach_beats_random": true,
+      "B.reach_positive": true,
+      "B.replay_canonical": true,
+      "nonredundant_grad_cosine": true,
+      "nonredundant_spearman": true
+    }
+  }
+}
+[19:27:18] fetching artifacts
+[19:27:24] deleted ledbpot5wyswxn
+[19:27:30] pods after: 0
+{
+  "fetch_rc": 0,
   "gpu": "NVIDIA GeForce RTX 4090",
-  "pod_id": "6vcslhlyfup6dh",
+  "pod_id": "ledbpot5wyswxn",
   "pods_after": 0,
+  "remote_rc": 0,
   "remote_versions": "2.6.0+cu124 4.49.0 True",
   "script": "fit_and_admit.py",
-  "started": "2026-08-22T05:58:50Z"
+  "started": "2026-08-22T07:06:47Z"
 }
